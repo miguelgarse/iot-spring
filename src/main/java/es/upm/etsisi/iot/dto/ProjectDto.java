@@ -3,7 +3,7 @@ package es.upm.etsisi.iot.dto;
 import java.util.Date;
 import java.util.List;
 
-import es.upm.etsisi.iot.security.entity.User;
+import es.upm.etsisi.iot.security.dto.UserDto;
 
 public class ProjectDto {
 
@@ -13,8 +13,8 @@ public class ProjectDto {
 	private String keywords;
 	private String location;
 	private List<SensorDto> sensors;
-	private User createdUser;
-	private User lastModifieduser;
+	private UserDto createdUser;
+	private UserDto lastModifieduser;
 	private Date dateCreated;
 	private Date dateLastModified;
 
@@ -70,19 +70,19 @@ public class ProjectDto {
 		this.sensors = sensors;
 	}
 
-	public User getCreatedUser() {
+	public UserDto getCreatedUser() {
 		return createdUser;
 	}
 
-	public void setCreatedUser(User createdUser) {
+	public void setCreatedUser(UserDto createdUser) {
 		this.createdUser = createdUser;
 	}
 
-	public User getLastModifieduser() {
+	public UserDto getLastModifieduser() {
 		return lastModifieduser;
 	}
 
-	public void setLastModifieduser(User lastModifieduser) {
+	public void setLastModifieduser(UserDto lastModifieduser) {
 		this.lastModifieduser = lastModifieduser;
 	}
 

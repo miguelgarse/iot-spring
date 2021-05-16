@@ -5,7 +5,10 @@ public class SensorTypeDto {
 	private Long id;
 	private String name;
 	private String description;
-	
+
+	public SensorTypeDto() {
+		// Empty constructor
+	}
 
 	public Long getId() {
 		return id;
@@ -30,6 +33,5 @@ public class SensorTypeDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 
 }

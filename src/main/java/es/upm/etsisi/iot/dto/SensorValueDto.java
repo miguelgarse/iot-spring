@@ -3,16 +3,17 @@ package es.upm.etsisi.iot.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import es.upm.etsisi.iot.security.dto.UserDto;
 import es.upm.etsisi.iot.security.entity.User;
 
 public class SensorValueDto {
 
 	private Long id;
 	private SensorDto sensor;
-	private BigDecimal valor;
+	private BigDecimal value;
 	private Date timestamp;
-	private User createdUser;
-	private User lastModifieduser;
+	private UserDto createdUser;
+	private UserDto lastModifieduser;
 	private Date dateCreated;
 	private Date dateLastModified;
 
@@ -36,12 +37,12 @@ public class SensorValueDto {
 		this.sensor = sensor;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getValue() {
+		return value;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setValue(BigDecimal value) {
+		this.value = value;
 	}
 
 	public Date getTimestamp() {
@@ -52,19 +53,19 @@ public class SensorValueDto {
 		this.timestamp = timestamp;
 	}
 
-	public User getCreatedUser() {
+	public UserDto getCreatedUser() {
 		return createdUser;
 	}
 
-	public void setCreatedUser(User createdUser) {
+	public void setCreatedUser(UserDto createdUser) {
 		this.createdUser = createdUser;
 	}
 
-	public User getLastModifieduser() {
+	public UserDto getLastModifieduser() {
 		return lastModifieduser;
 	}
 
-	public void setLastModifieduser(User lastModifieduser) {
+	public void setLastModifieduser(UserDto lastModifieduser) {
 		this.lastModifieduser = lastModifieduser;
 	}
 

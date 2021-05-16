@@ -2,20 +2,20 @@ package es.upm.etsisi.iot.dto;
 
 import java.util.Date;
 
-import es.upm.etsisi.iot.security.entity.User;
+import es.upm.etsisi.iot.security.dto.UserDto;
 
 public class SensorDto {
 
 	private Long id;
 	private String name;
-	private String sensorTypeId;
-	private User createdUser;
-	private User lastModifieduser;
+	private Long sensorTypeId;
+	private UserDto createdUser;
+	private UserDto lastModifieduser;
 	private Date dateCreated;
 	private Date dateLastModified;
 
 	public SensorDto() {
-		super();
+		// Empty constructor
 	}
 
 	public Long getId() {
@@ -34,27 +34,27 @@ public class SensorDto {
 		this.name = name;
 	}
 
-	public String getSensorTypeId() {
+	public Long getSensorTypeId() {
 		return sensorTypeId;
 	}
 
-	public void setSensorTypeId(String sensorTypeId) {
+	public void setSensorTypeId(Long sensorTypeId) {
 		this.sensorTypeId = sensorTypeId;
 	}
 
-	public User getCreatedUser() {
+	public UserDto getCreatedUser() {
 		return createdUser;
 	}
 
-	public void setCreatedUser(User createdUser) {
+	public void setCreatedUser(UserDto createdUser) {
 		this.createdUser = createdUser;
 	}
 
-	public User getLastModifieduser() {
+	public UserDto getLastModifieduser() {
 		return lastModifieduser;
 	}
 
-	public void setLastModifieduser(User lastModifieduser) {
+	public void setLastModifieduser(UserDto lastModifieduser) {
 		this.lastModifieduser = lastModifieduser;
 	}
 
