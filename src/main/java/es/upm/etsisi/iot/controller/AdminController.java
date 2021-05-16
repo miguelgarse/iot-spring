@@ -16,13 +16,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.upm.etsisi.iot.security.dto.NewUser;
+import es.upm.etsisi.iot.security.dto.UserDto;
 import es.upm.etsisi.iot.security.entity.Role;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.enums.RoleName;
@@ -69,7 +72,7 @@ public class AdminController {
 			// Auditoría
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			User createdBy = userService.getByUsername(authentication.getName()).get();
-			user.setCreatedBy(createdBy.getId());
+			user.setCreatedUser(createdBy);
 			user.setDateCreated(new Date());
 			
 			userService.save(user);
@@ -78,10 +81,26 @@ public class AdminController {
 		}
 	}
 	
-	@GetMapping("/getAllUsers")
-	public ResponseEntity<List<User>> getUsers(){
-		
+	@GetMapping()
+	public ResponseEntity<List<User>> findAllUsers(){
 		return new ResponseEntity<>(this.userService.findAll(), HttpStatus.OK);
-		
 	}
+	
+	@GetMapping("/{userId}")
+	public ResponseEntity<UserDto> findUserById(@PathVariable Long userId){
+		return new ResponseEntity<>(this.userService.findById(userId), HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<UserDto> deleteUserId(@PathVariable Long userId){
+		UserDto userToDelete = this.userService.findById(userId);
+		
+		if(userToDelete != null) {
+			this.userService.deleteById(userId);
+			return new ResponseEntity<>(userToDelete, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 }
