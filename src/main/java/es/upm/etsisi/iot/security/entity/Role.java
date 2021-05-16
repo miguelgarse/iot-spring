@@ -10,7 +10,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import es.upm.etsisi.iot.security.enums.RoleName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
 @Entity
 @Table(name = "ROLES")
 public class Role {
@@ -22,30 +30,5 @@ public class Role {
 	@NotNull
 	@Enumerated(EnumType.STRING) // Para que la base de datos no lo contemple como un numero
 	private RoleName roleName;
-
-	public Role() {
-		// Empty constructor
-	}
-
-	public Role(@NotNull RoleName roleName) {
-		super();
-		this.roleName = roleName;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public RoleName getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(RoleName roleName) {
-		this.roleName = roleName;
-	}
 
 }
