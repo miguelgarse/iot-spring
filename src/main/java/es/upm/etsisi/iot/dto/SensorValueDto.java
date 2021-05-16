@@ -18,7 +18,7 @@ public class SensorValueDto {
 	private Date dateLastModified;
 
 	public SensorValueDto() {
-		super();
+		// Empty constructor
 	}
 
 	public Long getId() {
