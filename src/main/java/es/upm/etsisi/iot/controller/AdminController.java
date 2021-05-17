@@ -60,6 +60,8 @@ public class AdminController {
 			User user = new User(newUser.getName(), newUser.getUsername(), newUser.getEmail(),
 					passwordEncoder.encode(newUser.getPassword()));
 			
+			user.setLastname(newUser.getLastname());
+			
 			Set<Role> roles = new HashSet<>();
 			roles.add(roleService.getByRoleName(RoleName.ROLE_USER).get());
 			
