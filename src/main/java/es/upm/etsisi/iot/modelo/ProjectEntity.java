@@ -1,8 +1,10 @@
 package es.upm.etsisi.iot.modelo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,10 +19,9 @@ import javax.persistence.TemporalType;
 
 import org.springframework.beans.BeanUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import es.upm.etsisi.iot.dto.ProjectDto;
+import es.upm.etsisi.iot.dto.SensorDto;
 import es.upm.etsisi.iot.security.entity.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,8 +44,7 @@ public class ProjectEntity {
 	private String keywords;
 	private String location;
 
-	@JsonIgnoreProperties(value = "project")
-	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
 	private List<SensorEntity> sensors;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -61,6 +61,15 @@ public class ProjectEntity {
 
 	public ProjectEntity(ProjectDto project) {
 		BeanUtils.copyProperties(project, this);
+		
+		List<SensorEntity> sensorEntityList = new ArrayList<>();
+		for(SensorDto sensorDto : project.getSensors()) {
+			sensorEntityList.add(new SensorEntity(sensorDto));
+		}
+		
+		this.setSensors(sensorEntityList);
+		this.setCreatedUser(new User(project.getCreatedUser()));
+		this.setLastModifieduser(new User(project.getLastModifieduser()));
 	}
 
 	public ProjectDto toProjectDto() {

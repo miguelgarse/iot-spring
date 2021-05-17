@@ -60,6 +60,9 @@ public class SensorEntity {
 
 	public SensorEntity(SensorDto sensor) {
 		BeanUtils.copyProperties(sensor, this);
+		
+		this.setCreatedUser(new User(sensor.getCreatedUser()));
+		this.setLastModifieduser(new User(sensor.getLastModifieduser()));
 	}
 
 	public SensorDto toSensorDto() {
