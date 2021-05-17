@@ -7,19 +7,21 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 public class NewUser {
-	
+
 	@NotBlank
 	private String name;
-	
+
+	private String lastname;
+
 	@NotBlank
 	private String username;
-	
+
 	@Email
 	private String email;
-	
+
 	@NotBlank
 	private String password;
-	
+
 	private Set<String> roles = new HashSet<>();
 
 	public String getName() {
@@ -28,6 +30,14 @@ public class NewUser {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 	public String getUsername() {
