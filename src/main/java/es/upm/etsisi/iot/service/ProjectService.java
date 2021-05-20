@@ -1,5 +1,12 @@
 package es.upm.etsisi.iot.service;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,8 +16,11 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import es.upm.etsisi.iot.dto.ProjectDto;
+import es.upm.etsisi.iot.dto.SensorDto;
+import es.upm.etsisi.iot.dto.SensorValueDto;
 import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
@@ -35,8 +45,83 @@ public class ProjectService {
 		this.modelMapper = modelMapper;
 	}
 
-	public ProjectDto newProject(ProjectDto project) {
+	private List<SensorDto> processCsvData(ProjectDto project, MultipartFile file) throws Exception {
+		List<SensorDto> sensors = new ArrayList<>();
+		
+		InputStream is = null;
+		BufferedReader bfReader = null;
+		List<String> csvLines = new ArrayList<>();
+		try {
+			is = new ByteArrayInputStream(file.getBytes());
+			bfReader = new BufferedReader(new InputStreamReader(is));
+			String temp = null;
+			while ((temp = bfReader.readLine()) != null) {
+				csvLines.add(temp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+			} catch (Exception ex) {
+				throw ex;
+			}
+		}
+		
+		if(csvLines.size() > 1) {
+			Date sysDate = new Date();
+			Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+			int numValues = csvLines.size();
+			int numSensors = csvLines.get(0).split(";").length;
+			String[][] csvMatrix = new String [numValues][numSensors];
+			
+			for(int i = 0; i < numValues; i++) {
+				csvMatrix[i] = csvLines.get(i).split(";");
+			}
+			
+			for(int col = 1; col < numSensors; col++) {
+				String sensorName = csvMatrix[0][col];
+				
+				SensorDto sensorDto = new SensorDto();
+				sensorDto.setName(sensorName);
+				sensorDto.setDateCreated(sysDate);
+				sensorDto.setDateLastModified(sysDate);
+				sensorDto.setCreatedUser(optionalUser.get().toUserDto());
+				sensorDto.setLastModifieduser(optionalUser.get().toUserDto());
+				sensorDto.setSensorTypeId(2L);
+				
+				List<SensorValueDto> sensorValueDtos = new ArrayList<>();
+				for (int row = 1; row < numValues; row++) {
+					String value = csvMatrix[row][col];
+					String timestamp = csvMatrix[row][0];
+					
+					SensorValueDto sensorValue = new SensorValueDto();
+					sensorValue.setValue(new BigDecimal(value));  
+					sensorValue.setTimestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(timestamp.trim()));
+					sensorValue.setDateCreated(sysDate);
+					sensorValue.setDateLastModified(sysDate);
+					sensorValue.setCreatedUser(optionalUser.get().toUserDto());
+					sensorValue.setLastModifieduser(optionalUser.get().toUserDto());
+					sensorValueDtos.add(sensorValue);
+				}
+				
+				sensorDto.setSensorValues(sensorValueDtos);
+				sensors.add(sensorDto);
+			}
+		} else {
+			throw new Exception("El fichero CSV no contiene valores");
+		}
+		
+		return sensors;
+	}
+	
+	public ProjectDto newProject(ProjectDto project, MultipartFile file) throws Exception {
 		Date currentDate = new Date();
+		
+		List<SensorDto> sensors = processCsvData(project, file);
+		
+		project.setSensors(sensors);
 		
 		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
 		
@@ -60,6 +145,9 @@ public class ProjectService {
 		projectEntity.getSensors().stream().forEach(x -> {
 			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
 			x.setProject(projectEntity);
+			x.getSensorValues().stream().forEach(sernsorValue -> {
+				sernsorValue.setSensor(x);
+			});
 		});
 		
 		//ProjectEntity projectEntity = new ProjectEntity(project);

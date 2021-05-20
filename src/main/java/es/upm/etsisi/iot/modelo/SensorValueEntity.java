@@ -3,7 +3,6 @@ package es.upm.etsisi.iot.modelo;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,16 +36,13 @@ public class SensorValueEntity {
 	@SequenceGenerator(name = "SENSOR_VALUE_ID_GENERATOR", sequenceName = "SEQ_SENSOR_VALUE", allocationSize = 1)
 	private Long id;
 
-	private BigDecimal valor;
+	private BigDecimal value;
 
 	private Date timestamp;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private SensorEntity sensor;
 
-	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)
-	private ProjectEntity project;
-	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	private User createdUser;
 
