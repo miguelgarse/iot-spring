@@ -76,32 +76,42 @@ public class ProjectService {
 			int numSensors = csvLines.get(0).split(";").length;
 			String[][] csvMatrix = new String [numValues][numSensors];
 			
+			for(int i = 0; i < numValues; i++) {
+				csvMatrix[i] = csvLines.get(i).split(";");
+			}
+			
 			for(int col = 1; col < numSensors; col++) {
 				String sensorName = csvMatrix[0][col];
+				
 				SensorDto sensorDto = new SensorDto();
 				sensorDto.setName(sensorName);
 				sensorDto.setDateCreated(sysDate);
 				sensorDto.setDateLastModified(sysDate);
 				sensorDto.setCreatedUser(optionalUser.get().toUserDto());
 				sensorDto.setLastModifieduser(optionalUser.get().toUserDto());
+				sensorDto.setSensorTypeId(2L);
 				
+				List<SensorValueDto> sensorValueDtos = new ArrayList<>();
 				for (int row = 1; row < numValues; row++) {
 					String value = csvMatrix[row][col];
 					String timestamp = csvMatrix[row][0];
 					
 					SensorValueDto sensorValue = new SensorValueDto();
 					sensorValue.setValue(new BigDecimal(value));  
-					sensorValue.setTimestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(timestamp));
+					sensorValue.setTimestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(timestamp.trim()));
 					sensorValue.setDateCreated(sysDate);
 					sensorValue.setDateLastModified(sysDate);
 					sensorValue.setCreatedUser(optionalUser.get().toUserDto());
 					sensorValue.setLastModifieduser(optionalUser.get().toUserDto());
+					sensorValueDtos.add(sensorValue);
 				}
+				
+				sensorDto.setSensorValues(sensorValueDtos);
+				sensors.add(sensorDto);
 			}
 		} else {
 			throw new Exception("El fichero CSV no contiene valores");
 		}
-		
 		
 		return sensors;
 	}
@@ -110,6 +120,8 @@ public class ProjectService {
 		Date currentDate = new Date();
 		
 		List<SensorDto> sensors = processCsvData(project, file);
+		
+		project.setSensors(sensors);
 		
 		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
 		
@@ -133,6 +145,9 @@ public class ProjectService {
 		projectEntity.getSensors().stream().forEach(x -> {
 			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
 			x.setProject(projectEntity);
+			x.getSensorValues().stream().forEach(sernsorValue -> {
+				sernsorValue.setSensor(x);
+			});
 		});
 		
 		//ProjectEntity projectEntity = new ProjectEntity(project);
