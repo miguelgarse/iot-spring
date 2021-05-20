@@ -1,6 +1,7 @@
 package es.upm.etsisi.iot.modelo;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,6 +46,9 @@ public class SensorEntity {
 	
 	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)
 	private ProjectEntity project;
+	
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	private List<SensorValueEntity> sensorValues;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	private User createdUser;

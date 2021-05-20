@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import es.upm.etsisi.iot.security.dto.UserDto;
-import es.upm.etsisi.iot.security.entity.User;
 
 public class SensorValueDto {
 

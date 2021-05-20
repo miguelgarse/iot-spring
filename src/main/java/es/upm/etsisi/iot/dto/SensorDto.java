@@ -1,6 +1,7 @@
 package es.upm.etsisi.iot.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import es.upm.etsisi.iot.security.dto.UserDto;
 
@@ -9,6 +10,7 @@ public class SensorDto {
 	private Long id;
 	private String name;
 	private Long sensorTypeId;
+	private List<SensorValueDto> sensorValues;
 	private UserDto createdUser;
 	private UserDto lastModifieduser;
 	private Date dateCreated;
@@ -40,6 +42,14 @@ public class SensorDto {
 
 	public void setSensorTypeId(Long sensorTypeId) {
 		this.sensorTypeId = sensorTypeId;
+	}
+
+	public List<SensorValueDto> getSensorValues() {
+		return sensorValues;
+	}
+
+	public void setSensorValues(List<SensorValueDto> sensorValues) {
+		this.sensorValues = sensorValues;
 	}
 
 	public UserDto getCreatedUser() {
