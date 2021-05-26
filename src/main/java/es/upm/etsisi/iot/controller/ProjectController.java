@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,6 @@ public class ProjectController {
 		return projectService.createProject(project);
 	}
 	
-	
 	@PutMapping
 	public ProjectDto updateProject(@RequestPart("file") MultipartFile file, @RequestPart ProjectDto project) throws Exception {
 		return projectService.updateProject(project, file);
@@ -55,6 +55,11 @@ public class ProjectController {
 	public ResponseEntity<List<ProjectDto>> findAllByCurrentUser(Authentication authentication) {
 		String username = authentication.getName();
 		return ResponseEntity.ok(projectService.findAllByCurrentUser(username));
+	}
+	
+	@PostMapping("/search")
+	public List<ProjectDto> searchProject(@RequestBody ProjectDto projectSearch) throws Exception {
+		return projectService.searchProject(projectSearch);
 	}
 
 }

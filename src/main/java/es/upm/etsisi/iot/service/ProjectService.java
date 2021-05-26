@@ -195,8 +195,11 @@ public class ProjectService {
 		return null;
 	}
 
-	public ProjectDto searchProject(String projectName) {
-		return null;
+	public List<ProjectDto> searchProject(ProjectDto projectDto) {
+		return this.projectRepository.findByTitleLike(projectDto.getTitle())
+				.stream()
+				.map(ProjectEntity::toProjectDto)
+				.collect(Collectors.toList());
 	}
 
 	public ProjectDto findById(Long id) {
