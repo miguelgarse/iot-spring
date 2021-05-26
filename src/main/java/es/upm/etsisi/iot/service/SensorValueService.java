@@ -41,6 +41,7 @@ public class SensorValueService {
 		if(project.isPresent()) {
 			project.get().getSensors().stream().forEach(sensor -> {
 				sensor.getSensorValues();
+				sensors.add(sensor);
 			});
 		}
 		

@@ -9,6 +9,4 @@ import es.upm.etsisi.iot.modelo.SensorTypeEntity;
 @Repository
 public interface SensorTypeRepository extends JpaRepository<SensorTypeEntity, Long> {
 
-	SensorTypeEntity findByName(String name);
-	
 }

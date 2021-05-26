@@ -47,7 +47,7 @@ public class SensorEntity {
 	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)
 	private ProjectEntity project;
 	
-	@OneToMany(mappedBy = "sensor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
 	private List<SensorValueEntity> sensorValues;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)

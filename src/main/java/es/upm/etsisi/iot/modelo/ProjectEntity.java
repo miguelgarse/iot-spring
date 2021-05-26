@@ -21,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 
 import es.upm.etsisi.iot.dto.ProjectDto;
 import es.upm.etsisi.iot.dto.SensorDto;
+import es.upm.etsisi.iot.dto.SensorValueDto;
 import es.upm.etsisi.iot.security.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,7 +45,7 @@ public class ProjectEntity {
 	private String keywords;
 	private String location;
 
-	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
 	private List<SensorEntity> sensors;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -75,6 +76,27 @@ public class ProjectEntity {
 	public ProjectDto toProjectDto() {
 		ProjectDto project = new ProjectDto();
 		BeanUtils.copyProperties(this, project);
+		
+		project.setCreatedUser(this.getCreatedUser().toUserDto());
+		project.setLastModifieduser(this.getLastModifieduser().toUserDto());
+		
+		List<SensorDto> sensorDtoList = new ArrayList<>();
+		this.getSensors().stream().forEach(sensor -> {
+			List<SensorValueDto> sensorValueDtoList = new ArrayList<>();
+			
+			sensor.getSensorValues().stream().forEach(sensorValue -> {
+				sensorValueDtoList.add(sensorValue.toSensorValueDto());
+			});
+			
+			SensorDto sensorDto = sensor.toSensorDto();
+			sensorDto.setSensorValues(sensorValueDtoList);
+			sensorDto.setSensorTypeId(sensor.getSensorType().getId());
+			
+			sensorDtoList.add(sensorDto);
+		});
+		
+		project.setSensors(sensorDtoList);
+		
 		return project;
 	}
 

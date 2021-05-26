@@ -2,9 +2,6 @@ package es.upm.etsisi.iot.controller;
 
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,14 +31,14 @@ public class ProjectController {
 	}
 	
 	@PostMapping
-	public ProjectDto newProject(@RequestPart("file") MultipartFile file, @RequestPart("project") ProjectDto project) throws Exception {
-		return projectService.newProject(project, file);
+	public ProjectDto createProject(@RequestPart("project") ProjectDto project) throws Exception {
+		return projectService.createProject(project);
 	}
 	
 	
 	@PutMapping
-	public ProjectDto updateProject(@NotNull @NotEmpty @RequestBody ProjectDto project) {
-		return projectService.updateProject(project);
+	public ProjectDto updateProject(@RequestPart("file") MultipartFile file, @RequestPart ProjectDto project) throws Exception {
+		return projectService.updateProject(project, file);
 	}
 
 	@GetMapping
