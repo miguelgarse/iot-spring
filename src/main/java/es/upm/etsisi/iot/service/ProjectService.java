@@ -38,7 +38,6 @@ public class ProjectService {
 	private SensorTypeRepository sensorTypeRepository;
 	private SensorValueRepository sensorValueRepository;
 	private SensorRepository sensorRepository;
-
 	
 	private ModelMapper modelMapper;
 	

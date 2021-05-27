@@ -2,11 +2,9 @@ package es.upm.etsisi.iot.controller;
 
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +31,12 @@ public class SensorTypeController {
 	}
 
 	@GetMapping(value = "/{sensorTypeId}")
-	public SensorTypeDto searchSensorType(
-			@NotNull @NotEmpty @PathVariable String sensorTypeId) {
+	public SensorTypeDto searchSensorType(@PathVariable Long sensorTypeId) {
 		return sensorTypeService.findById(sensorTypeId);
+	}
+	
+	@DeleteMapping(value = "/{sensorTypeId}")
+	public void deleteSensorTypeById(@PathVariable Long sensorTypeId) {
+		sensorTypeService.deleteSensorTypeById(sensorTypeId);
 	}
 }
