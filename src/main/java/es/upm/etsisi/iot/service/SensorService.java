@@ -47,7 +47,7 @@ public class SensorService {
 		if (!sensorToUpdate.getName().equals(sensor.getName())) {
 			sensorToUpdate.setName(sensor.getName());
 		}
-		if (!sensorToUpdate.getSensorType().getName().equals(sensor.getSensorTypeId())) {
+		if (!sensorToUpdate.getSensorType().getId().equals(sensor.getSensorTypeId())) {
 			sensorToUpdate.setSensorType(sensorTypeRepository.findById(sensor.getSensorTypeId()).get());
 		}
 		

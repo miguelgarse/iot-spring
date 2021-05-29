@@ -13,4 +13,6 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
 	List<ProjectEntity> findByCreatedUser(User createdUser);
 	
+	List<ProjectEntity> findByTitleLike(String title);
+	
 }

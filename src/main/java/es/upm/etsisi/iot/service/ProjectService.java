@@ -23,7 +23,9 @@ import es.upm.etsisi.iot.dto.SensorDto;
 import es.upm.etsisi.iot.dto.SensorValueDto;
 import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
+import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
+import es.upm.etsisi.iot.modelo.dao.SensorValueRepository;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.repository.UserRepository;
 import es.upm.etsisi.iot.utils.Utilities;
@@ -34,18 +36,22 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	private SensorTypeRepository sensorTypeRepository;
-
+	private SensorValueRepository sensorValueRepository;
+	private SensorRepository sensorRepository;
+	
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, ModelMapper modelMapper) {
+	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorValueRepository sensorValueRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository; 
 		this.sensorTypeRepository = sensorTypeRepository;
+		this.sensorValueRepository = sensorValueRepository;
+		this.sensorRepository = sensorRepository;
 		this.modelMapper = modelMapper;
 	}
 
-	private List<SensorDto> processCsvData(ProjectDto project, MultipartFile file) throws Exception {
+	public List<SensorDto> processCsvData(ProjectDto project, MultipartFile file) throws Exception {
 		List<SensorDto> sensors = new ArrayList<>();
 		
 		InputStream is = null;
@@ -83,13 +89,14 @@ public class ProjectService {
 			for(int col = 1; col < numSensors; col++) {
 				String sensorName = csvMatrix[0][col];
 				
-				SensorDto sensorDto = new SensorDto();
+				SensorDto sensorDto = project.getSensors().stream()
+						.filter(x -> x.getName().equals(sensorName))
+						.findAny()
+		                .orElseThrow();
+				
 				sensorDto.setName(sensorName);
-				sensorDto.setDateCreated(sysDate);
 				sensorDto.setDateLastModified(sysDate);
-				sensorDto.setCreatedUser(optionalUser.get().toUserDto());
 				sensorDto.setLastModifieduser(optionalUser.get().toUserDto());
-				sensorDto.setSensorTypeId(2L);
 				
 				List<SensorValueDto> sensorValueDtos = new ArrayList<>();
 				for (int row = 1; row < numValues; row++) {
@@ -116,7 +123,37 @@ public class ProjectService {
 		return sensors;
 	}
 	
-	public ProjectDto newProject(ProjectDto project, MultipartFile file) throws Exception {
+	public ProjectDto createProject(ProjectDto project) throws Exception {
+		Date currentDate = new Date();
+		
+		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		
+		if(optionalUser.isPresent()) {
+			project.setCreatedUser(optionalUser.get().toUserDto());
+			project.setLastModifieduser(optionalUser.get().toUserDto());
+			
+			project.getSensors().stream().forEach(x -> {
+				x.setCreatedUser(optionalUser.get().toUserDto());
+				x.setLastModifieduser(optionalUser.get().toUserDto());
+				x.setDateCreated(currentDate);
+				x.setDateLastModified(currentDate);
+			});
+		}
+		
+		project.setDateLastModified(currentDate);
+		project.setDateCreated(currentDate);
+		
+		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
+		
+		projectEntity.getSensors().stream().forEach(x -> {
+			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
+			x.setProject(projectEntity);
+		});
+		
+		return projectRepository.save(projectEntity).toProjectDto();
+	}
+
+	public ProjectDto updateProject(ProjectDto project, MultipartFile file) throws Exception {
 		Date currentDate = new Date();
 		
 		List<SensorDto> sensors = processCsvData(project, file);
@@ -150,28 +187,35 @@ public class ProjectService {
 			});
 		});
 		
-		//ProjectEntity projectEntity = new ProjectEntity(project);
 		return projectRepository.save(projectEntity).toProjectDto();
-	}
-
-	public ProjectDto updateProject(ProjectDto projectDto) {
-		return null;
 	}
 
 	public ProjectDto deleteProject(String projectId) {
 		return null;
 	}
 
-	public ProjectDto searchProject(String projectName) {
-		return null;
+	public List<ProjectDto> searchProject(ProjectDto projectDto) {
+		return this.projectRepository.findByTitleLike(projectDto.getTitle())
+				.stream()
+				.map(ProjectEntity::toProjectDto)
+				.collect(Collectors.toList());
 	}
 
 	public ProjectDto findById(Long id) {
 		Optional<ProjectEntity> project = projectRepository.findById(id);
 		
-		modelMapper.map(project.get(), ProjectDto.class);
+		ProjectEntity projectEntity = null;
+		if(project.isPresent()) {
+			projectEntity = project.get();
+			// Recuperamos los sensores de un proyecto
+			projectEntity.setSensors(this.sensorRepository.findByProject(projectEntity));
+		} else {
+			projectEntity = new ProjectEntity();
+		}
 		
-		return modelMapper.map(project.get(), ProjectDto.class);
+		ProjectDto projectDto = projectEntity.toProjectDto();
+		return projectDto;
+//		return modelMapper.map(projectEntity, ProjectDto.class);
 	}
 	
 	public List<ProjectDto> findAll() {

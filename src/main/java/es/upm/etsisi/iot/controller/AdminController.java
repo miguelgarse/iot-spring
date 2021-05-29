@@ -38,15 +38,16 @@ import es.upm.etsisi.iot.security.service.UserService;
 @RequestMapping(value = "/api/admin")
 public class AdminController {
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	RoleService roleService;
+	private PasswordEncoder passwordEncoder;
+	private UserService userService;
+	private RoleService roleService;
 
+	@Autowired
+	public AdminController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
+		this.passwordEncoder = passwordEncoder;
+		this.userService = userService;
+		this.roleService = roleService;
+	}
 	
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@Valid @RequestBody NewUser newUser, BindingResult bindingResult){
