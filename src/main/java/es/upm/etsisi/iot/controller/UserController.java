@@ -1,5 +1,6 @@
 package es.upm.etsisi.iot.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,8 +21,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.upm.etsisi.iot.security.dto.NewUser;
@@ -34,21 +37,21 @@ import es.upm.etsisi.iot.security.service.UserService;
 
 @CrossOrigin(value = "*")
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
-@RequestMapping(value = "/api/admin")
-public class AdminController {
+@RequestMapping(value = "/api/user")
+public class UserController {
 
 	private PasswordEncoder passwordEncoder;
 	private UserService userService;
 	private RoleService roleService;
 
 	@Autowired
-	public AdminController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
+	public UserController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
 		this.passwordEncoder = passwordEncoder;
 		this.userService = userService;
 		this.roleService = roleService;
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@Valid @RequestBody NewUser newUser, BindingResult bindingResult){
 		if(bindingResult.hasErrors()) {
@@ -84,16 +87,19 @@ public class AdminController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping()
 	public ResponseEntity<List<User>> findAllUsers(){
 		return new ResponseEntity<>(this.userService.findAll(), HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/{userId}")
 	public ResponseEntity<UserDto> findUserById(@PathVariable Long userId){
 		return new ResponseEntity<>(this.userService.findById(userId), HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<UserDto> deleteUserId(@PathVariable Long userId){
 		UserDto userToDelete = this.userService.findById(userId);
@@ -104,6 +110,21 @@ public class AdminController {
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@GetMapping("/getCurrentUser")
+	public ResponseEntity<UserDto> getCurrentUser(){
+		return new ResponseEntity<>(this.userService.getCurrentUser(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/generateTokenApi")
+	public ResponseEntity<UserDto> generateTokenApi(){
+		return new ResponseEntity<>(this.userService.generateTokenApi(), HttpStatus.OK);
+	}
+	
+	@PutMapping("/updateUserImage")
+	public ResponseEntity<UserDto> updateUserImage(@RequestPart("image") String base64image) throws IOException{
+		return new ResponseEntity<>(this.userService.updateUserImage(base64image), HttpStatus.OK);
 	}
 	
 }

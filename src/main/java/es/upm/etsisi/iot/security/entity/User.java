@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -63,6 +64,14 @@ public class User {
 	
 	private Date dateCreated;
 	
+	private String githubAccount;
+	
+	private String tokenApi;
+	
+	@Lob
+	private String profileImage;
+
+	private Boolean isActive;
 	
 	public User(@NotNull String name, @NotNull String username, @NotNull String email, @NotNull String password,
 			Set<Role> roles) {
