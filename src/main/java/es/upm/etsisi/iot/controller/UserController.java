@@ -137,4 +137,9 @@ public class UserController {
 		return new ResponseEntity<>(this.userService.updateUserImage(base64image), HttpStatus.OK);
 	}
 	
+	@PutMapping("/updatePassword")
+	public ResponseEntity<UserDto> updatePassword(@RequestPart("password") String password) throws IOException{
+		return new ResponseEntity<>(this.userService.updatePassword(password), HttpStatus.OK);
+	}
+	
 }

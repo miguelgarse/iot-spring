@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,9 @@ import es.upm.etsisi.iot.utils.Utilities;
 public class UserService {
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private Utilities utilities;
@@ -106,5 +110,20 @@ public class UserService {
 		return userDto;
 	}
 	
+	public UserDto updatePassword(String password) throws IOException{
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		
+		UserDto userDto = new UserDto();
+		if(optionalUser.isPresent()) {
+			User user = optionalUser.get();
+
+			user.setPassword(passwordEncoder.encode(password));
+			this.userRepository.save(user);
+			
+			userDto = user.toUserDto();
+		}
+		
+		return userDto;
+	}
 	
 }

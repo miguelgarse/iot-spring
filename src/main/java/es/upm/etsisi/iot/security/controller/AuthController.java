@@ -64,8 +64,8 @@ public class AuthController {
 			Optional<User> optionalUser = this.userService.findByUsername(loginUser.getUsername());
 			if(optionalUser.isPresent()) {
 				User user = optionalUser.get();
+				jwtDto.setDateLastLogin(user.getDateLastLogin()!=null?user.getDateLastLogin():null);
 				user.setDateLastLogin(new Date());
-				jwtDto.setDateLastLogin(new Date());
 				this.userService.save(user);
 			}
 			
