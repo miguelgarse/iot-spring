@@ -26,5 +26,6 @@ public class UserDto {
 	private String githubAccount;
 	private String tokenApi;
 	private String profileImage;
-
+	private Date dateLastLogin;
+	
 }

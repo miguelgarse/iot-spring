@@ -44,6 +44,7 @@ public class User {
 	private String username;
 	
 	@NotNull
+	@Column(nullable = false)
 	private String password;
 	
 	@NotNull
@@ -52,6 +53,7 @@ public class User {
 	private String lastname;
 	
 	@NotNull
+	@Column(nullable = false)
 	private String email;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -72,6 +74,9 @@ public class User {
 	private String profileImage;
 
 	private Boolean isActive;
+	
+	private Date dateLastLogin;
+	
 	
 	public User(@NotNull String name, @NotNull String username, @NotNull String email, @NotNull String password,
 			Set<Role> roles) {

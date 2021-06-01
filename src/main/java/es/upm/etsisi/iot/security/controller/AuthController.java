@@ -1,5 +1,8 @@
 package es.upm.etsisi.iot.security.controller;
 
+import java.util.Date;
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import es.upm.etsisi.iot.security.dto.JwtDto;
 import es.upm.etsisi.iot.security.dto.LoginUser;
+import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.jwt.JwtProvider;
 import es.upm.etsisi.iot.security.service.RoleService;
 import es.upm.etsisi.iot.security.service.UserService;
@@ -29,16 +33,21 @@ import es.upm.etsisi.iot.security.service.UserService;
 @RequestMapping("/auth")
 @CrossOrigin(value = "*")
 public class AuthController {
-	@Autowired
 	PasswordEncoder passwordEncoder;
-	@Autowired
 	AuthenticationManager authenticationManager;
-	@Autowired
 	UserService userService;
-	@Autowired
 	RoleService roleService;
-	@Autowired
 	JwtProvider jwtProvider;
+	
+	@Autowired
+	public AuthController(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+			UserService userService, RoleService roleService, JwtProvider jwtProvider) {
+		this.passwordEncoder = passwordEncoder;
+		this.authenticationManager = authenticationManager;
+		this.userService = userService;
+		this.roleService = roleService;
+		this.jwtProvider = jwtProvider;
+	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUser loginUser, BindingResult bindingResult) {
@@ -51,7 +60,16 @@ public class AuthController {
 			String jwt = jwtProvider.generateToken(authentication);
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
-			return new ResponseEntity(jwtDto, HttpStatus.OK);
+			
+			Optional<User> optionalUser = this.userService.findByUsername(loginUser.getUsername());
+			if(optionalUser.isPresent()) {
+				User user = optionalUser.get();
+				user.setDateLastLogin(new Date());
+				jwtDto.setDateLastLogin(new Date());
+				this.userService.save(user);
+			}
+			
+			return new ResponseEntity<>(jwtDto, HttpStatus.OK);
 		}
 	}
 }
