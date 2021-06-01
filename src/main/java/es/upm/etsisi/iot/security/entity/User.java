@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,6 +44,7 @@ public class User {
 	private String username;
 	
 	@NotNull
+	@Column(nullable = false)
 	private String password;
 	
 	@NotNull
@@ -51,6 +53,7 @@ public class User {
 	private String lastname;
 	
 	@NotNull
+	@Column(nullable = false)
 	private String email;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -62,6 +65,17 @@ public class User {
 	private User createdUser;
 	
 	private Date dateCreated;
+	
+	private String githubAccount;
+	
+	private String tokenApi;
+	
+	@Lob
+	private String profileImage;
+
+	private Boolean isActive;
+	
+	private Date dateLastLogin;
 	
 	
 	public User(@NotNull String name, @NotNull String username, @NotNull String email, @NotNull String password,

@@ -1,6 +1,7 @@
 package es.upm.etsisi.iot.security.dto;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,6 +10,7 @@ public class JwtDto {
 	private String bearer = "Bearer";
 	private String username;
 	private Collection<? extends GrantedAuthority> authorities;
+	private Date dateLastLogin;
 
 	public JwtDto(String token, String username, Collection<? extends GrantedAuthority> authorities) {
 		super();
@@ -47,6 +49,14 @@ public class JwtDto {
 
 	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
 		this.authorities = authorities;
+	}
+
+	public Date getDateLastLogin() {
+		return dateLastLogin;
+	}
+
+	public void setDateLastLogin(Date dateLastLogin) {
+		this.dateLastLogin = dateLastLogin;
 	}
 
 }

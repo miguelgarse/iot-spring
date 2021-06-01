@@ -33,6 +33,9 @@ import es.upm.etsisi.iot.utils.Utilities;
 @Service
 public class ProjectService {
 
+	@Autowired
+	private Utilities utilities;
+	
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	private SensorTypeRepository sensorTypeRepository;
@@ -77,7 +80,7 @@ public class ProjectService {
 		
 		if(csvLines.size() > 1) {
 			Date sysDate = new Date();
-			Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+			Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 			int numValues = csvLines.size();
 			int numSensors = csvLines.get(0).split(";").length;
 			String[][] csvMatrix = new String [numValues][numSensors];
@@ -126,7 +129,7 @@ public class ProjectService {
 	public ProjectDto createProject(ProjectDto project) throws Exception {
 		Date currentDate = new Date();
 		
-		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 		
 		if(optionalUser.isPresent()) {
 			project.setCreatedUser(optionalUser.get().toUserDto());
@@ -160,7 +163,7 @@ public class ProjectService {
 		
 		project.setSensors(sensors);
 		
-		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 		
 		if(optionalUser.isPresent()) {
 			project.setCreatedUser(optionalUser.get().toUserDto());

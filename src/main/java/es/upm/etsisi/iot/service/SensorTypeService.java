@@ -20,6 +20,9 @@ import es.upm.etsisi.iot.utils.Utilities;
 @Service
 public class SensorTypeService {
 
+	@Autowired
+	private Utilities utilities;
+	
 	private SensorTypeRepository sensorTypeRepository;
 	private UserRepository userRepository;
 	
@@ -49,7 +52,7 @@ public class SensorTypeService {
 			SensorTypeEntity sensorTypeEntity = sensorType.get();
 			sensorTypeEntity.setIsActive(Boolean.FALSE);
 			sensorTypeEntity.setDateLastModified(new Date());
-			User currentUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername()).get();
+			User currentUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername()).get();
 			sensorTypeEntity.setLastModifieduser(currentUser);
 			
 			this.sensorTypeRepository.save(sensorTypeEntity);
