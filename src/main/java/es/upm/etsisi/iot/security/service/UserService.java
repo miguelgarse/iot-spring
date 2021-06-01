@@ -17,11 +17,14 @@ import es.upm.etsisi.iot.utils.Utilities;
 @Service
 @Transactional
 public class UserService {
-
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
+	
+	@Autowired
+	private Utilities utilities;
+	
 
-	public Optional<User> getByUsername(String username) {
+	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
 
@@ -60,7 +63,7 @@ public class UserService {
 	}
 	
 	public UserDto getCurrentUser(){
-		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -72,7 +75,7 @@ public class UserService {
 	
 	
 	public UserDto generateTokenApi(){
-		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -89,7 +92,7 @@ public class UserService {
 	}
 	
 	public UserDto updateUserImage(String base64image) throws IOException{
-		Optional<User> optionalUser = this.userRepository.findByUsername(Utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
