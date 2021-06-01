@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,15 @@ import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.enums.RoleName;
 import es.upm.etsisi.iot.security.service.RoleService;
 import es.upm.etsisi.iot.security.service.UserService;
+import es.upm.etsisi.iot.utils.Utilities;
 
 @CrossOrigin(value = "*")
 @RestController
 @RequestMapping(value = "/api/user")
 public class UserController {
 
+	@Autowired
+	private Utilities utilities;
 	private PasswordEncoder passwordEncoder;
 	private UserService userService;
 	private RoleService roleService;
@@ -77,11 +81,17 @@ public class UserController {
 			
 			// Auditoría
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			User createdBy = userService.getByUsername(authentication.getName()).get();
+			User createdBy = userService.findByUsername(authentication.getName()).get();
 			user.setCreatedUser(createdBy);
 			user.setDateCreated(new Date());
 			
 			userService.save(user);
+			
+			try {
+				utilities.sendMail(user, newUser.getPassword());
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
 			
 			return new ResponseEntity<>("Usuario creado", HttpStatus.CREATED);
 		}
