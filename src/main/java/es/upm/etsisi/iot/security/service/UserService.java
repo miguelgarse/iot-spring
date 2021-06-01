@@ -47,15 +47,14 @@ public class UserService {
 	public UserDto findById(Long userId) {
 		Optional<User> user = userRepository.findById(userId);
 		
+		UserDto userDto = new UserDto(); 
 		if(user.isPresent()) {
 			User foundUser = user.get();
-			foundUser.setPassword("");
 			
-			UserDto dto = foundUser.toUserDto();
-			return dto;
-		} else {
-			return null;
-		}
+			userDto = foundUser.toUserDto();
+		} 
+		
+		return userDto;
 	}
 	
 	public void deleteById(Long userId) {
