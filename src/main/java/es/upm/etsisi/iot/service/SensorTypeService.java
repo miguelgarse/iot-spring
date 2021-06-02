@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.upm.etsisi.iot.dto.SensorTypeDto;
 import es.upm.etsisi.iot.modelo.SensorTypeEntity;
@@ -18,6 +19,7 @@ import es.upm.etsisi.iot.security.repository.UserRepository;
 import es.upm.etsisi.iot.utils.Utilities;
 
 @Service
+@Transactional
 public class SensorTypeService {
 
 	@Autowired

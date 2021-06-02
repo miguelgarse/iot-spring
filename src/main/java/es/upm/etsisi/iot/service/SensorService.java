@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.upm.etsisi.iot.dto.SensorDto;
 import es.upm.etsisi.iot.modelo.SensorEntity;
@@ -14,6 +15,7 @@ import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
 
 @Service
+@Transactional
 public class SensorService {
 	
 	private SensorRepository sensorRepository;
