@@ -11,8 +11,10 @@ import es.upm.etsisi.iot.security.entity.User;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
-	List<ProjectEntity> findByCreatedUser(User createdUser);
+	List<ProjectEntity> findByCreatedUserAndIsActiveTrueOrderByDateLastModifiedDesc(User createdUser);
 	
 	List<ProjectEntity> findByTitleLike(String title);
+	
+	List<ProjectEntity> findByIsActiveTrueOrderByDateLastModifiedDesc();
 	
 }

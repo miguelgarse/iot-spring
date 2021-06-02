@@ -84,6 +84,7 @@ public class UserController {
 			User createdBy = userService.findByUsername(authentication.getName()).get();
 			user.setCreatedUser(createdBy);
 			user.setDateCreated(new Date());
+			user.setIsActive(Boolean.TRUE);
 			
 			userService.save(user);
 			
@@ -115,7 +116,7 @@ public class UserController {
 		UserDto userToDelete = this.userService.findById(userId);
 		
 		if(userToDelete != null) {
-			this.userService.deleteById(userId);
+			this.userService.deleteUserById(userId);
 			return new ResponseEntity<>(userToDelete, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

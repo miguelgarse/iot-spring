@@ -52,7 +52,7 @@ public class SensorTypeService {
 			SensorTypeEntity sensorTypeEntity = sensorType.get();
 			sensorTypeEntity.setIsActive(Boolean.FALSE);
 			sensorTypeEntity.setDateLastModified(new Date());
-			User currentUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername()).get();
+			User currentUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername()).get();
 			sensorTypeEntity.setLastModifieduser(currentUser);
 			
 			this.sensorTypeRepository.save(sensorTypeEntity);

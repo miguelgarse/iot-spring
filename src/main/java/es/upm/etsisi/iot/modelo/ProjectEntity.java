@@ -59,6 +59,8 @@ public class ProjectEntity {
 
 	@Temporal(TemporalType.DATE)
 	private Date dateLastModified;
+	
+	private Boolean isActive;
 
 	public ProjectEntity(ProjectDto project) {
 		BeanUtils.copyProperties(project, this);

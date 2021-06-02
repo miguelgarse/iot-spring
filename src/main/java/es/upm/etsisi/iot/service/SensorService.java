@@ -64,4 +64,11 @@ public class SensorService {
 		SensorEntity sensorFind = sensorRepository.findByName(sensorId);
 		sensorRepository.deleteById(sensorFind.getId());
 	}
+	
+	public List<SensorDto> findAllSensorByProjectId(Long projectId) {
+		return sensorRepository.findByProjectId(projectId)
+				.stream()
+				.map(SensorEntity::toSensorDto)
+				.collect(Collectors.toList());
+	}
 }

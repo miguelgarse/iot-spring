@@ -54,7 +54,7 @@ public class ProjectController {
 	@GetMapping("/byCurrentUser")
 	public ResponseEntity<List<ProjectDto>> findAllByCurrentUser(Authentication authentication) {
 		String username = authentication.getName();
-		return ResponseEntity.ok(projectService.findAllByCurrentUser(username));
+		return ResponseEntity.ok(projectService.findAllByCreatedUser(username));
 	}
 	
 	@PostMapping("/search")
