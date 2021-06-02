@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -245,6 +247,22 @@ public class ProjectService {
 		}
 		
 		return projectDtoList;
+	}
+	
+	public void deleteById(Long projectId) {
+		Optional<ProjectEntity> projectOptional = projectRepository.findById(projectId);
+		
+		if(projectOptional.isPresent()) {
+			ProjectEntity projectEntity = projectOptional.get();
+			projectEntity.setIsActive(Boolean.FALSE);
+			projectEntity.setDateLastModified(new Date());
+			User currentUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername()).get();
+			projectEntity.setLastModifieduser(currentUser);
+			
+			this.projectRepository.save(projectEntity);
+		} else {
+			throw new EntityNotFoundException("El Proyecto solicitado no se encuentra almacenado");
+		}
 	}
 	
 }
