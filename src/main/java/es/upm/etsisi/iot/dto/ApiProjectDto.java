@@ -15,7 +15,7 @@ public class ApiProjectDto {
 
 	private String title;
 	private String description;
-	private String keywords;
+	private String[] keywords;
 	private String location;
 	private List<ApiSensorDto> sensors;
 	
