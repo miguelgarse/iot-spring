@@ -139,12 +139,14 @@ public class ProjectService {
 			project.setCreatedUser(optionalUser.get().toUserDto());
 			project.setLastModifieduser(optionalUser.get().toUserDto());
 			
-			project.getSensors().stream().forEach(x -> {
-				x.setCreatedUser(optionalUser.get().toUserDto());
-				x.setLastModifieduser(optionalUser.get().toUserDto());
-				x.setDateCreated(currentDate);
-				x.setDateLastModified(currentDate);
-			});
+			if(project.getSensors() != null && !project.getSensors().isEmpty()) {
+				project.getSensors().stream().forEach(x -> {
+					x.setCreatedUser(optionalUser.get().toUserDto());
+					x.setLastModifieduser(optionalUser.get().toUserDto());
+					x.setDateCreated(currentDate);
+					x.setDateLastModified(currentDate);
+				});
+			}
 		}
 		
 		project.setDateLastModified(currentDate);
@@ -152,10 +154,14 @@ public class ProjectService {
 		
 		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
 		
-		projectEntity.getSensors().stream().forEach(x -> {
-			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
-			x.setProject(projectEntity);
-		});
+		if(project.getSensors() != null && !project.getSensors().isEmpty()) {
+			projectEntity.getSensors().stream().forEach(x -> {
+				x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
+				x.setProject(projectEntity);
+			});
+		}
+		
+		projectEntity.setIsActive(Boolean.TRUE);
 		
 		return projectRepository.save(projectEntity).toProjectDto();
 	}
