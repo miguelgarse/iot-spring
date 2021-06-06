@@ -14,10 +14,6 @@ import lombok.NoArgsConstructor;
 public class ApiUserDto {
 
 	private String username;
-	private String name;
-	private String lastname;
-	private String email;
-	private String githubAccount;
 	private List<ApiProjectDto> projects;
 	
 }

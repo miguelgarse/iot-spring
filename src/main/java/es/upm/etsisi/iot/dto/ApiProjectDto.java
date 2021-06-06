@@ -18,5 +18,6 @@ public class ApiProjectDto {
 	private String[] keywords;
 	private String location;
 	private List<ApiSensorDto> sensors;
+	private String urlThingsboard;
 	
 }
