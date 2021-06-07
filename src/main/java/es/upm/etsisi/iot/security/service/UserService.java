@@ -141,4 +141,21 @@ public class UserService {
 		return userRepository.findByTokenApiAndIsActiveTrue(tokenApi);
 	}
 	
+	public UserDto updateGithub(String gitHub) throws IOException{
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
+		
+		UserDto userDto = new UserDto();
+		if(optionalUser.isPresent()) {
+			User user = optionalUser.get();
+
+			user.setGithubAccount(gitHub);
+			this.userRepository.save(user);
+			
+			userDto = user.toUserDto();
+		}
+		
+		return userDto;
+	}
+	
+	
 }

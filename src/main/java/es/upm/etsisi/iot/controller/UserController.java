@@ -143,4 +143,8 @@ public class UserController {
 		return new ResponseEntity<>(this.userService.updatePassword(password), HttpStatus.OK);
 	}
 	
+	@PutMapping("/updateGithub")
+	public ResponseEntity<UserDto> updateGithub(@RequestPart("gitHub") String gitHub) throws IOException{
+		return new ResponseEntity<>(this.userService.updateGithub(gitHub), HttpStatus.OK);
+	}
 }
