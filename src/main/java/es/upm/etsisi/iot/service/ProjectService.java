@@ -13,9 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import es.upm.etsisi.iot.dto.ProjectDto;
@@ -31,6 +34,7 @@ import es.upm.etsisi.iot.security.repository.UserRepository;
 import es.upm.etsisi.iot.utils.Utilities;
 
 @Service
+@Transactional
 public class ProjectService {
 
 	@Autowired
@@ -80,7 +84,7 @@ public class ProjectService {
 		
 		if(csvLines.size() > 1) {
 			Date sysDate = new Date();
-			Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+			Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 			int numValues = csvLines.size();
 			int numSensors = csvLines.get(0).split(";").length;
 			String[][] csvMatrix = new String [numValues][numSensors];
@@ -129,18 +133,20 @@ public class ProjectService {
 	public ProjectDto createProject(ProjectDto project) throws Exception {
 		Date currentDate = new Date();
 		
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		if(optionalUser.isPresent()) {
 			project.setCreatedUser(optionalUser.get().toUserDto());
 			project.setLastModifieduser(optionalUser.get().toUserDto());
 			
-			project.getSensors().stream().forEach(x -> {
-				x.setCreatedUser(optionalUser.get().toUserDto());
-				x.setLastModifieduser(optionalUser.get().toUserDto());
-				x.setDateCreated(currentDate);
-				x.setDateLastModified(currentDate);
-			});
+			if(project.getSensors() != null && !project.getSensors().isEmpty()) {
+				project.getSensors().stream().forEach(x -> {
+					x.setCreatedUser(optionalUser.get().toUserDto());
+					x.setLastModifieduser(optionalUser.get().toUserDto());
+					x.setDateCreated(currentDate);
+					x.setDateLastModified(currentDate);
+				});
+			}
 		}
 		
 		project.setDateLastModified(currentDate);
@@ -148,10 +154,14 @@ public class ProjectService {
 		
 		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
 		
-		projectEntity.getSensors().stream().forEach(x -> {
-			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
-			x.setProject(projectEntity);
-		});
+		if(project.getSensors() != null && !project.getSensors().isEmpty()) {
+			projectEntity.getSensors().stream().forEach(x -> {
+				x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
+				x.setProject(projectEntity);
+			});
+		}
+		
+		projectEntity.setIsActive(Boolean.TRUE);
 		
 		return projectRepository.save(projectEntity).toProjectDto();
 	}
@@ -163,7 +173,7 @@ public class ProjectService {
 		
 		project.setSensors(sensors);
 		
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		if(optionalUser.isPresent()) {
 			project.setCreatedUser(optionalUser.get().toUserDto());
@@ -211,7 +221,7 @@ public class ProjectService {
 		if(project.isPresent()) {
 			projectEntity = project.get();
 			// Recuperamos los sensores de un proyecto
-			projectEntity.setSensors(this.sensorRepository.findByProject(projectEntity));
+			projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
 		} else {
 			projectEntity = new ProjectEntity();
 		}
@@ -222,20 +232,20 @@ public class ProjectService {
 	}
 	
 	public List<ProjectDto> findAll() {
-		List<ProjectEntity> projects = projectRepository.findAll();
+		List<ProjectEntity> projects = projectRepository.findByIsActiveTrueOrderByDateLastModifiedDesc();
 		
 		return projects.stream()
 				.map(ProjectEntity::toProjectDto)
 				.collect(Collectors.toList());
 	}
 
-	public List<ProjectDto> findAllByCurrentUser(String username) {
+	public List<ProjectDto> findAllByCreatedUser(String username) {
 		List<ProjectDto> projectDtoList = new ArrayList<>();
 		
-		Optional<User> optionalUser = this.userRepository.findByUsername(username);
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(username);
 		
 		if(optionalUser.isPresent()) {
-			List<ProjectEntity> projects = projectRepository.findByCreatedUser(optionalUser.get());
+			List<ProjectEntity> projects = projectRepository.findByCreatedUserAndIsActiveTrueOrderByDateLastModifiedDesc(optionalUser.get());
 			
 			projectDtoList = projects.stream()
 					.map(ProjectEntity::toProjectDto)
@@ -243,6 +253,22 @@ public class ProjectService {
 		}
 		
 		return projectDtoList;
+	}
+	
+	public void deleteById(Long projectId) {
+		Optional<ProjectEntity> projectOptional = projectRepository.findById(projectId);
+		
+		if(projectOptional.isPresent()) {
+			ProjectEntity projectEntity = projectOptional.get();
+			projectEntity.setIsActive(Boolean.FALSE);
+			projectEntity.setDateLastModified(new Date());
+			User currentUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername()).get();
+			projectEntity.setLastModifieduser(currentUser);
+			
+			this.projectRepository.save(projectEntity);
+		} else {
+			throw new EntityNotFoundException("El Proyecto solicitado no se encuentra almacenado");
+		}
 	}
 	
 }

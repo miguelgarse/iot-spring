@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +31,7 @@ public class UserService {
 	
 
 	public Optional<User> findByUsername(String username) {
-		return userRepository.findByUsername(username);
+		return userRepository.findByUsernameAndIsActiveTrue(username);
 	}
 
 	public boolean existsByUsername(String username) {
@@ -61,12 +63,21 @@ public class UserService {
 		return userDto;
 	}
 	
-	public void deleteById(Long userId) {
-		userRepository.deleteById(userId);
+	public void deleteUserById(Long userId) {
+		Optional<User> optionalUser = this.userRepository.findById(userId);
+		
+		if(optionalUser.isPresent()) {
+			User user = optionalUser.get();
+			user.setIsActive(Boolean.FALSE);
+			
+			this.userRepository.save(user);
+		} else {
+			throw new EntityNotFoundException("El usuario solicitado no se encuentra almacenado");
+		}
 	}
 	
 	public UserDto getCurrentUser(){
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -78,7 +89,7 @@ public class UserService {
 	
 	
 	public UserDto generateTokenApi(){
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -95,7 +106,7 @@ public class UserService {
 	}
 	
 	public UserDto updateUserImage(String base64image) throws IOException{
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -111,7 +122,7 @@ public class UserService {
 	}
 	
 	public UserDto updatePassword(String password) throws IOException{
-		Optional<User> optionalUser = this.userRepository.findByUsername(utilities.getCurrentUser().getUsername());
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		UserDto userDto = new UserDto();
 		if(optionalUser.isPresent()) {
@@ -125,5 +136,26 @@ public class UserService {
 		
 		return userDto;
 	}
+	
+	public Optional<User> findByTokenApi(String tokenApi) {
+		return userRepository.findByTokenApiAndIsActiveTrue(tokenApi);
+	}
+	
+	public UserDto updateGithub(String gitHub) throws IOException{
+		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
+		
+		UserDto userDto = new UserDto();
+		if(optionalUser.isPresent()) {
+			User user = optionalUser.get();
+
+			user.setGithubAccount(gitHub);
+			this.userRepository.save(user);
+			
+			userDto = user.toUserDto();
+		}
+		
+		return userDto;
+	}
+	
 	
 }

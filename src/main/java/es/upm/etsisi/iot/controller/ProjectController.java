@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,7 +55,7 @@ public class ProjectController {
 	@GetMapping("/byCurrentUser")
 	public ResponseEntity<List<ProjectDto>> findAllByCurrentUser(Authentication authentication) {
 		String username = authentication.getName();
-		return ResponseEntity.ok(projectService.findAllByCurrentUser(username));
+		return ResponseEntity.ok(projectService.findAllByCreatedUser(username));
 	}
 	
 	@PostMapping("/search")
@@ -62,4 +63,8 @@ public class ProjectController {
 		return projectService.searchProject(projectSearch);
 	}
 
+	@DeleteMapping("/{projectId}")
+	public void deleteProject(@PathVariable Long projectId) throws Exception {
+		projectService.deleteById(projectId);
+	}
 }

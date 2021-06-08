@@ -3,7 +3,6 @@ package es.upm.etsisi.iot.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import es.upm.etsisi.iot.security.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class SensorValueDto {
+public class ApiSensorValueDto {
 
-	private Long id;
-	private SensorDto sensor;
 	private BigDecimal value;
 	private Date timestamp;
-	private UserDto createdUser;
-	private UserDto lastModifieduser;
 	private Date dateCreated;
-	private Date dateLastModified;
-
+	
 }

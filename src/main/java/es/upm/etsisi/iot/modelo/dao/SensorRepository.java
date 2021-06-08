@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.SensorEntity;
 
 
@@ -16,6 +15,6 @@ public interface SensorRepository extends JpaRepository<SensorEntity, Long> {
 
 	SensorEntity findByName(String a);
 	
-	List<SensorEntity> findByProject(ProjectEntity project);
+	List<SensorEntity> findByProjectId(Long projectId);
 	
 }
