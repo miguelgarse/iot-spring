@@ -41,7 +41,7 @@ public class SensorEntity {
 
 	private String name;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private SensorTypeEntity sensorType;
 	
 	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)

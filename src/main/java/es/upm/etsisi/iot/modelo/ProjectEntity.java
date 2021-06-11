@@ -51,7 +51,7 @@ public class ProjectEntity {
 	@Column(length = 500)
 	private String urlThingsboard;
 
-	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	private List<SensorEntity> sensors;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -89,7 +89,7 @@ public class ProjectEntity {
 		project.setLastModifieduser(this.getLastModifieduser().toUserDto());
 		
 		List<SensorDto> sensorDtoList = new ArrayList<>();
-		if(project.getSensors() != null && !project.getSensors().isEmpty()) {
+		if(this.getSensors() != null && !this.getSensors().isEmpty()) {
 			this.getSensors().stream().forEach(sensor -> {
 				List<SensorValueDto> sensorValueDtoList = new ArrayList<>();
 				
@@ -99,7 +99,7 @@ public class ProjectEntity {
 				
 				SensorDto sensorDto = sensor.toSensorDto();
 				sensorDto.setSensorValues(sensorValueDtoList);
-				sensorDto.setSensorTypeId(sensor.getSensorType().getId());
+				sensorDto.setSensorType(sensor.getSensorType().toSensorTypeDto());
 				
 				sensorDtoList.add(sensorDto);
 			});

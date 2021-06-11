@@ -29,7 +29,7 @@ public class SensorService {
 	}
 
 	public SensorDto createSensor(SensorDto sensorDto) {
-		Optional<SensorTypeEntity> sensorTypeEntity = sensorTypeRepository.findById(sensorDto.getSensorTypeId());
+		Optional<SensorTypeEntity> sensorTypeEntity = sensorTypeRepository.findById(sensorDto.getSensorType().getId());
 		SensorEntity sensor = new SensorEntity();
 		sensor.setName(sensorDto.getName());
 		sensor.setSensorType(sensorTypeEntity.get());
@@ -49,8 +49,8 @@ public class SensorService {
 		if (!sensorToUpdate.getName().equals(sensor.getName())) {
 			sensorToUpdate.setName(sensor.getName());
 		}
-		if (!sensorToUpdate.getSensorType().getId().equals(sensor.getSensorTypeId())) {
-			sensorToUpdate.setSensorType(sensorTypeRepository.findById(sensor.getSensorTypeId()).get());
+		if (!sensorToUpdate.getSensorType().getId().equals(sensor.getSensorType().getId())) {
+			sensorToUpdate.setSensorType(sensorTypeRepository.findById(sensor.getSensorType().getId()).get());
 		}
 		
 		return sensorRepository.save(sensorToUpdate).toSensorDto();

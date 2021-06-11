@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.upm.etsisi.iot.dto.SensorCategoryDto;
 import es.upm.etsisi.iot.dto.SensorTypeDto;
 import es.upm.etsisi.iot.service.SensorTypeService;
 
@@ -41,5 +42,10 @@ public class SensorTypeController {
 	@DeleteMapping(value = "/{sensorTypeId}")
 	public void deleteSensorTypeById(@PathVariable Long sensorTypeId) {
 		sensorTypeService.deleteSensorTypeById(sensorTypeId);
+	}
+	
+	@GetMapping("/categories")
+	public List<SensorCategoryDto> findAllSensorCategories() {
+		return sensorTypeService.findAllSensorCategories();
 	}
 }

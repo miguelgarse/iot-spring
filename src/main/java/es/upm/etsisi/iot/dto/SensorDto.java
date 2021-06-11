@@ -17,7 +17,7 @@ public class SensorDto {
 
 	private Long id;
 	private String name;
-	private Long sensorTypeId;
+	private SensorTypeDto sensorType;
 	private List<SensorValueDto> sensorValues;
 	private UserDto createdUser;
 	private UserDto lastModifieduser;

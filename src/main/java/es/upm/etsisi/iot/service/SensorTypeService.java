@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.upm.etsisi.iot.dto.SensorCategoryDto;
 import es.upm.etsisi.iot.dto.SensorTypeDto;
+import es.upm.etsisi.iot.modelo.SensorCategoryEntity;
 import es.upm.etsisi.iot.modelo.SensorTypeEntity;
+import es.upm.etsisi.iot.modelo.dao.SensorCategoryRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.repository.UserRepository;
@@ -26,11 +29,13 @@ public class SensorTypeService {
 	private Utilities utilities;
 	
 	private SensorTypeRepository sensorTypeRepository;
+	private SensorCategoryRepository sensorCategoryRepository;
 	private UserRepository userRepository;
 	
 	@Autowired
-	public SensorTypeService(SensorTypeRepository sensorTypeRepository, UserRepository userRepository) {
+	public SensorTypeService(SensorTypeRepository sensorTypeRepository, UserRepository userRepository, SensorCategoryRepository sensorCategoryRepository) {
 		this.sensorTypeRepository = sensorTypeRepository;
+		this.sensorCategoryRepository = sensorCategoryRepository;
 		this.userRepository = userRepository;
 	}
 
@@ -62,5 +67,13 @@ public class SensorTypeService {
 			throw new EntityNotFoundException("El tipo de sensor solicitado no se encuentra almacenado");
 		}
 	}
+	
+	public List<SensorCategoryDto> findAllSensorCategories() {
+		return sensorCategoryRepository.findByIsActiveTrueOrderByCategoryAsc()
+				.stream()
+				.map(SensorCategoryEntity::toSensorCategoryDto)
+				.collect(Collectors.toList());
+	}
+	
 
 }

@@ -169,9 +169,10 @@ public class ProjectService {
 	public ProjectDto updateProject(ProjectDto project, MultipartFile file) throws Exception {
 		Date currentDate = new Date();
 		
-		List<SensorDto> sensors = processCsvData(project, file);
-		
-		project.setSensors(sensors);
+		if(file != null) {
+			List<SensorDto> sensors = processCsvData(project, file);
+			project.setSensors(sensors);
+		}
 		
 		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
@@ -195,10 +196,14 @@ public class ProjectService {
 		projectEntity.getSensors().stream().forEach(x -> {
 			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
 			x.setProject(projectEntity);
-			x.getSensorValues().stream().forEach(sernsorValue -> {
-				sernsorValue.setSensor(x);
-			});
+			if(x.getSensorValues() != null && !x.getSensorValues().isEmpty()) {
+				x.getSensorValues().stream().forEach(sernsorValue -> {
+					sernsorValue.setSensor(x);
+				});
+			}
 		});
+		
+		projectEntity.setIsActive(Boolean.TRUE);
 		
 		return projectRepository.save(projectEntity).toProjectDto();
 	}
