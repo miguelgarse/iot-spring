@@ -28,7 +28,6 @@ import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
-import es.upm.etsisi.iot.modelo.dao.SensorValueRepository;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.repository.UserRepository;
 import es.upm.etsisi.iot.utils.Utilities;
@@ -43,17 +42,15 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	private SensorTypeRepository sensorTypeRepository;
-	private SensorValueRepository sensorValueRepository;
 	private SensorRepository sensorRepository;
 	
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorValueRepository sensorValueRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
+	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository; 
 		this.sensorTypeRepository = sensorTypeRepository;
-		this.sensorValueRepository = sensorValueRepository;
 		this.sensorRepository = sensorRepository;
 		this.modelMapper = modelMapper;
 	}
@@ -189,7 +186,6 @@ public class ProjectService {
 		}
 		
 		project.setDateLastModified(currentDate);
-		project.setDateCreated(currentDate);
 		
 		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
 		
