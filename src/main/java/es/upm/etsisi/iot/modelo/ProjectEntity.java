@@ -41,16 +41,26 @@ public class ProjectEntity {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PROJECT_ID_GENERATOR")
 	@SequenceGenerator(name = "PROJECT_ID_GENERATOR", sequenceName = "SEQ_PROJECT", allocationSize = 1)
 	private Long id;
+	
 	@Column(length = 64)
 	private String title;
+	
 	@Column(length = 2000)
 	private String description;
+	
 	private String[] keywords;
+	
 	@Column(length = 255)
 	private String location;
+	
 	@Column(length = 500)
-	private String urlThingsboard;
+	private String dashboardIot;
 
+	@Column(length = 500)
+	private String collaborationPlatorm;
+	
+	private String[] components;
+	
 	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	private List<SensorEntity> sensors;
 

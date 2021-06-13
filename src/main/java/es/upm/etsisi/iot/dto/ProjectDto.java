@@ -21,7 +21,9 @@ public class ProjectDto {
 	private String[] keywords;
 	private String location;
 	private List<SensorDto> sensors;
-	private String urlThingsboard;
+	private String dashboardIot;
+	private String collaborationPlatorm;
+	private String[] components;
 	private UserDto createdUser;
 	private UserDto lastModifieduser;
 	private Date dateCreated;
