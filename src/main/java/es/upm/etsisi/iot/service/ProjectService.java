@@ -222,7 +222,7 @@ public class ProjectService {
 		if(project.isPresent()) {
 			projectEntity = project.get();
 			// Recuperamos los sensores de un proyecto
-			projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
+			//projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
 		} else {
 			projectEntity = new ProjectEntity();
 		}

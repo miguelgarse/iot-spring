@@ -61,7 +61,7 @@ public class ProjectEntity {
 	
 	private String[] components;
 	
-	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
 	private List<SensorEntity> sensors;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -103,9 +103,11 @@ public class ProjectEntity {
 			this.getSensors().stream().forEach(sensor -> {
 				List<SensorValueDto> sensorValueDtoList = new ArrayList<>();
 				
-				sensor.getSensorValues().stream().forEach(sensorValue -> {
-					sensorValueDtoList.add(sensorValue.toSensorValueDto());
-				});
+				if(sensor.getSensorValues() != null && !sensor.getSensorValues().isEmpty()) {
+					sensor.getSensorValues().stream().forEach(sensorValue -> {
+						sensorValueDtoList.add(sensorValue.toSensorValueDto());
+					});
+				}
 				
 				SensorDto sensorDto = sensor.toSensorDto();
 				sensorDto.setSensorValues(sensorValueDtoList);

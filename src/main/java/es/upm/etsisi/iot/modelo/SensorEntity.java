@@ -45,11 +45,11 @@ public class SensorEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private SensorTypeEntity sensorType;
 	
-	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)
+	@ManyToOne
 	private ProjectEntity project;
 	
 	@OrderBy(clause = "timestamp asc")
-	@OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
 	private List<SensorValueEntity> sensorValues;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
