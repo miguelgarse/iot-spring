@@ -37,7 +37,8 @@ public class SensorTypeEntity {
 
 	private String code;
 	
-	private String type;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private SensorCategoryEntity category;
 	
 	private String description;
 	
@@ -64,9 +65,12 @@ public class SensorTypeEntity {
 	}
 
 	public SensorTypeDto toSensorTypeDto() {
-		SensorTypeDto sensorType = new SensorTypeDto();
-		BeanUtils.copyProperties(this, sensorType);
-		return sensorType;
+		SensorTypeDto sensorTypeDto = new SensorTypeDto();
+		BeanUtils.copyProperties(this, sensorTypeDto);
+		
+		sensorTypeDto.setCategory(this.getCategory().toSensorCategoryDto());
+		
+		return sensorTypeDto;
 	}
 	
 }

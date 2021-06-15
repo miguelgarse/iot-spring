@@ -18,6 +18,8 @@ public class ApiProjectDto {
 	private String[] keywords;
 	private String location;
 	private List<ApiSensorDto> sensors;
-	private String urlThingsboard;
+	private String dashboardIot;
+	private String collaborationPlatorm;
+	private String[] components;
 	
 }

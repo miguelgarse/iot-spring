@@ -28,7 +28,6 @@ import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
-import es.upm.etsisi.iot.modelo.dao.SensorValueRepository;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.repository.UserRepository;
 import es.upm.etsisi.iot.utils.Utilities;
@@ -43,17 +42,15 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	private SensorTypeRepository sensorTypeRepository;
-	private SensorValueRepository sensorValueRepository;
 	private SensorRepository sensorRepository;
 	
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorValueRepository sensorValueRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
+	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository; 
 		this.sensorTypeRepository = sensorTypeRepository;
-		this.sensorValueRepository = sensorValueRepository;
 		this.sensorRepository = sensorRepository;
 		this.modelMapper = modelMapper;
 	}
@@ -169,9 +166,10 @@ public class ProjectService {
 	public ProjectDto updateProject(ProjectDto project, MultipartFile file) throws Exception {
 		Date currentDate = new Date();
 		
-		List<SensorDto> sensors = processCsvData(project, file);
-		
-		project.setSensors(sensors);
+		if(file != null) {
+			List<SensorDto> sensors = processCsvData(project, file);
+			project.setSensors(sensors);
+		}
 		
 		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
@@ -188,17 +186,20 @@ public class ProjectService {
 		}
 		
 		project.setDateLastModified(currentDate);
-		project.setDateCreated(currentDate);
 		
 		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
 		
 		projectEntity.getSensors().stream().forEach(x -> {
 			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
 			x.setProject(projectEntity);
-			x.getSensorValues().stream().forEach(sernsorValue -> {
-				sernsorValue.setSensor(x);
-			});
+			if(x.getSensorValues() != null && !x.getSensorValues().isEmpty()) {
+				x.getSensorValues().stream().forEach(sernsorValue -> {
+					sernsorValue.setSensor(x);
+				});
+			}
 		});
+		
+		projectEntity.setIsActive(Boolean.TRUE);
 		
 		return projectRepository.save(projectEntity).toProjectDto();
 	}
@@ -221,7 +222,7 @@ public class ProjectService {
 		if(project.isPresent()) {
 			projectEntity = project.get();
 			// Recuperamos los sensores de un proyecto
-			projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
+			//projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
 		} else {
 			projectEntity = new ProjectEntity();
 		}

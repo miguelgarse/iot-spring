@@ -2,7 +2,7 @@ package es.upm.etsisi.iot.dto;
 
 import java.util.Date;
 
-import es.upm.etsisi.iot.security.entity.User;
+import es.upm.etsisi.iot.security.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,17 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class SensorTypeDto {
+public class SensorCategoryDto {
 
 	private Long id;
-	private String code;
-	private SensorCategoryDto category;
+	private String category;
 	private String description;
-	private String manufacturer;
-	private String url;
-	private User createdUser;
-	private User lastModifieduser;
+	private UserDto createdUser;
+	private UserDto lastModifieduser;
 	private Date dateCreated;
 	private Date dateLastModified;
-	
+
 }

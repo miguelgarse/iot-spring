@@ -33,12 +33,12 @@ public class ProjectController {
 	}
 	
 	@PostMapping
-	public ProjectDto createProject(@RequestPart("project") ProjectDto project) throws Exception {
+	public ProjectDto createProject(@RequestPart(name = "file", required = false) MultipartFile file, @RequestPart("project") ProjectDto project) throws Exception {
 		return projectService.createProject(project);
 	}
 	
 	@PutMapping
-	public ProjectDto updateProject(@RequestPart("file") MultipartFile file, @RequestPart ProjectDto project) throws Exception {
+	public ProjectDto updateProject(@RequestPart(name = "file", required = false) MultipartFile file, @RequestPart ProjectDto project) throws Exception {
 		return projectService.updateProject(project, file);
 	}
 
