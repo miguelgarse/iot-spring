@@ -15,20 +15,17 @@ import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.SensorEntity;
 import es.upm.etsisi.iot.modelo.SensorValueEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
-import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorValueRepository;
 
 @Service
 @Transactional
 public class SensorValueService {
 	
-	private SensorRepository sensorRepository;
 	private SensorValueRepository sensorValueRepository;
 	private ProjectRepository projectRepository;
 	
 	@Autowired
-	public SensorValueService(SensorRepository sensorRepository, SensorValueRepository sensorValueRepository, ProjectRepository projectRepository) {
-		this.sensorRepository = sensorRepository;
+	public SensorValueService(SensorValueRepository sensorValueRepository, ProjectRepository projectRepository) {
 		this.sensorValueRepository = sensorValueRepository;
 		this.projectRepository = projectRepository;
 	}

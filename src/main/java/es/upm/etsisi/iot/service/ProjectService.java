@@ -26,7 +26,6 @@ import es.upm.etsisi.iot.dto.SensorDto;
 import es.upm.etsisi.iot.dto.SensorValueDto;
 import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
-import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorTypeRepository;
 import es.upm.etsisi.iot.security.entity.User;
 import es.upm.etsisi.iot.security.repository.UserRepository;
@@ -42,16 +41,14 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	private SensorTypeRepository sensorTypeRepository;
-	private SensorRepository sensorRepository;
 	
 	private ModelMapper modelMapper;
 	
 	@Autowired
-	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, SensorRepository sensorRepository, ModelMapper modelMapper) {
+	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, SensorTypeRepository sensorTypeRepository, ModelMapper modelMapper) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository; 
 		this.sensorTypeRepository = sensorTypeRepository;
-		this.sensorRepository = sensorRepository;
 		this.modelMapper = modelMapper;
 	}
 
@@ -174,14 +171,16 @@ public class ProjectService {
 		Optional<User> optionalUser = this.userRepository.findByUsernameAndIsActiveTrue(utilities.getCurrentUser().getUsername());
 		
 		if(optionalUser.isPresent()) {
-			project.setCreatedUser(optionalUser.get().toUserDto());
 			project.setLastModifieduser(optionalUser.get().toUserDto());
 			
-			project.getSensors().stream().forEach(x -> {
-				x.setCreatedUser(optionalUser.get().toUserDto());
-				x.setLastModifieduser(optionalUser.get().toUserDto());
-				x.setDateCreated(currentDate);
-				x.setDateLastModified(currentDate);
+			project.getSensors().stream().forEach(sensor -> {
+				if(sensor.getCreatedUser() == null) {
+					sensor.setCreatedUser(optionalUser.get().toUserDto());
+					sensor.setDateCreated(currentDate);
+				}
+				
+				sensor.setLastModifieduser(optionalUser.get().toUserDto());
+				sensor.setDateLastModified(currentDate);
 			});
 		}
 		
@@ -189,12 +188,12 @@ public class ProjectService {
 		
 		ProjectEntity projectEntity = modelMapper.map(project, ProjectEntity.class);
 		
-		projectEntity.getSensors().stream().forEach(x -> {
-			x.setSensorType(this.sensorTypeRepository.findById(x.getSensorType().getId()).get());
-			x.setProject(projectEntity);
-			if(x.getSensorValues() != null && !x.getSensorValues().isEmpty()) {
-				x.getSensorValues().stream().forEach(sernsorValue -> {
-					sernsorValue.setSensor(x);
+		projectEntity.getSensors().stream().forEach(sensor -> {
+			sensor.setSensorType(this.sensorTypeRepository.findById(sensor.getSensorType().getId()).get());
+			sensor.setProject(projectEntity);
+			if(sensor.getSensorValues() != null && !sensor.getSensorValues().isEmpty()) {
+				sensor.getSensorValues().stream().forEach(sernsorValue -> {
+					sernsorValue.setSensor(sensor);
 				});
 			}
 		});
@@ -202,10 +201,6 @@ public class ProjectService {
 		projectEntity.setIsActive(Boolean.TRUE);
 		
 		return projectRepository.save(projectEntity).toProjectDto();
-	}
-
-	public ProjectDto deleteProject(String projectId) {
-		return null;
 	}
 
 	public List<ProjectDto> searchProject(ProjectDto projectDto) {
@@ -221,15 +216,11 @@ public class ProjectService {
 		ProjectEntity projectEntity = null;
 		if(project.isPresent()) {
 			projectEntity = project.get();
-			// Recuperamos los sensores de un proyecto
-			//projectEntity.setSensors(this.sensorRepository.findByProjectId(projectEntity.getId()));
 		} else {
 			projectEntity = new ProjectEntity();
 		}
 		
-		ProjectDto projectDto = projectEntity.toProjectDto();
-		return projectDto;
-//		return modelMapper.map(projectEntity, ProjectDto.class);
+		return projectEntity.toProjectDto();
 	}
 	
 	public List<ProjectDto> findAll() {

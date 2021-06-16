@@ -61,9 +61,9 @@ public class UserController {
 		if(bindingResult.hasErrors()) {
 			return new ResponseEntity<>("Campos del usuario erroneos", HttpStatus.BAD_REQUEST);
 		} else if(userService.existsByUsername(newUser.getUsername())){
-			return new ResponseEntity<>("Nombre ya exsite", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Nombre de usuario ya existe", HttpStatus.BAD_REQUEST);
 		} else if(userService.existsByEmail(newUser.getEmail())){
-			return new ResponseEntity<>("Email ya exsite", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Email ya existe", HttpStatus.BAD_REQUEST);
 		} else {
 			User user = new User(newUser.getName(), newUser.getUsername(), newUser.getEmail(),
 					passwordEncoder.encode(newUser.getPassword()));
