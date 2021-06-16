@@ -96,7 +96,7 @@ public class ProjectService {
 				SensorDto sensorDto = project.getSensors().stream()
 						.filter(x -> x.getName().equals(sensorName))
 						.findAny()
-		                .orElseThrow();
+		                .orElse(new SensorDto());
 				
 				sensorDto.setName(sensorName);
 				sensorDto.setDateLastModified(sysDate);
