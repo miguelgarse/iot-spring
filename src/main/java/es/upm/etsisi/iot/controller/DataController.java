@@ -67,8 +67,8 @@ public class DataController {
 		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
 	}
 
-	@GetMapping("/{username}/{project}")
-	public ResponseEntity<ApiUserDto> findByUsernameAndProject(@PathVariable String username, @PathVariable String project, @RequestParam("token") String tokenApi) {
+	@GetMapping("/{username}/{projectId}")
+	public ResponseEntity<ApiUserDto> findByUsernameAndProject(@PathVariable String username, @PathVariable Long projectId, @RequestParam("token") String tokenApi) {
 		if(!checkToken(tokenApi))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		
@@ -77,15 +77,15 @@ public class DataController {
 		apiUserDto.setProjects(
 				apiUserDto.getProjects()
 				.stream()
-				.filter(prj -> prj.getTitle().contains(project))
+				.filter(prj -> prj.getId().equals(projectId))
 				.collect(Collectors.toList())
 		);
 		
 		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
 	}
 	
-	@GetMapping("/{username}/{project}/{sensor}")
-	public ResponseEntity<ApiUserDto> findByUsernameAndProjectAndSensor(@PathVariable String username, @PathVariable String project, @PathVariable String sensor, @RequestParam("token") String tokenApi) {
+	@GetMapping("/{username}/{projectId}/{sensor}")
+	public ResponseEntity<ApiUserDto> findByUsernameAndProjectAndSensor(@PathVariable String username, @PathVariable Long projectId, @PathVariable String sensor, @RequestParam("token") String tokenApi) {
 		if(!checkToken(tokenApi))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		
@@ -94,7 +94,7 @@ public class DataController {
 		apiUserDto.setProjects(
 				apiUserDto.getProjects()
 				.stream()
-				.filter(prj -> prj.getTitle().contains(project))
+				.filter(prj -> prj.getId().equals(projectId))
 				.collect(Collectors.toList())
 		);
 		
@@ -104,7 +104,7 @@ public class DataController {
 			prj.setSensors(
 				prj.getSensors()
 				.stream()
-				.filter(sens -> sens.getName().contains(sensor))
+				.filter(sens -> sens.getName().equals(sensor))
 				.collect(Collectors.toList())
 			);
 		});
@@ -112,9 +112,9 @@ public class DataController {
 		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
 	}
 	
-	@GetMapping("/{username}/{project}/{sensor}/{timestampIni}/{timestampEnd}")
+	@GetMapping("/{username}/{projectId}/{sensor}/{timestampIni}/{timestampEnd}")
 	public ResponseEntity<ApiUserDto> findByUsernameAndProjectAndSensorAndTimestampIniTimestampEnd(
-			@PathVariable String username, @PathVariable String project, @PathVariable String sensor,
+			@PathVariable String username, @PathVariable Long projectId, @PathVariable String sensor,
 			@PathVariable String timestampIni, @PathVariable String timestampEnd,
 			@RequestParam("token") String tokenApi) {
 		if (!checkToken(tokenApi))
@@ -134,7 +134,7 @@ public class DataController {
 	
 			// Filtramos por titulo de proyecto
 			apiUserDto.setProjects(apiUserDto.getProjects().stream()
-					.filter(prj -> prj.getTitle().contains(project))
+					.filter(prj -> prj.getId().equals(projectId))
 					.collect(Collectors.toList())
 			);
 			
@@ -145,7 +145,7 @@ public class DataController {
 				prj.setSensors(
 					prj.getSensors()
 					.stream()
-					.filter(sens -> sens.getName().contains(sensor))
+					.filter(sens -> sens.getName().equals(sensor))
 					.collect(Collectors.toList())
 				);
 			});
