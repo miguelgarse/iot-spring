@@ -10,5 +10,5 @@ import es.upm.etsisi.iot.modelo.SensorValueEntity;
 @Repository
 public interface SensorValueRepository extends JpaRepository<SensorValueEntity, Long> {
 
-	List<SensorValueEntity> findBySensor(Long sensorId);
+	List<SensorValueEntity> findBySensorId(Long sensorId);
 }

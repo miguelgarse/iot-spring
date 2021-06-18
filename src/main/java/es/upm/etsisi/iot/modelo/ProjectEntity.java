@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -40,12 +41,27 @@ public class ProjectEntity {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PROJECT_ID_GENERATOR")
 	@SequenceGenerator(name = "PROJECT_ID_GENERATOR", sequenceName = "SEQ_PROJECT", allocationSize = 1)
 	private Long id;
+	
+	@Column(length = 64)
 	private String title;
+	
+	@Column(length = 2000)
 	private String description;
-	private String keywords;
+	
+	private String[] keywords;
+	
+	@Column(length = 255)
 	private String location;
+	
+	@Column(length = 500)
+	private String dashboardIot;
 
-	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	@Column(length = 500)
+	private String collaborationPlatorm;
+	
+	private String[] components;
+	
+	@OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
 	private List<SensorEntity> sensors;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
@@ -59,6 +75,8 @@ public class ProjectEntity {
 
 	@Temporal(TemporalType.DATE)
 	private Date dateLastModified;
+	
+	private Boolean isActive;
 
 	public ProjectEntity(ProjectDto project) {
 		BeanUtils.copyProperties(project, this);
@@ -81,19 +99,23 @@ public class ProjectEntity {
 		project.setLastModifieduser(this.getLastModifieduser().toUserDto());
 		
 		List<SensorDto> sensorDtoList = new ArrayList<>();
-		this.getSensors().stream().forEach(sensor -> {
-			List<SensorValueDto> sensorValueDtoList = new ArrayList<>();
-			
-			sensor.getSensorValues().stream().forEach(sensorValue -> {
-				sensorValueDtoList.add(sensorValue.toSensorValueDto());
+		if(this.getSensors() != null && !this.getSensors().isEmpty()) {
+			this.getSensors().stream().forEach(sensor -> {
+				List<SensorValueDto> sensorValueDtoList = new ArrayList<>();
+				
+				if(sensor.getSensorValues() != null && !sensor.getSensorValues().isEmpty()) {
+					sensor.getSensorValues().stream().forEach(sensorValue -> {
+						sensorValueDtoList.add(sensorValue.toSensorValueDto());
+					});
+				}
+				
+				SensorDto sensorDto = sensor.toSensorDto();
+				sensorDto.setSensorValues(sensorValueDtoList);
+				sensorDto.setSensorType(sensor.getSensorType().toSensorTypeDto());
+				
+				sensorDtoList.add(sensorDto);
 			});
-			
-			SensorDto sensorDto = sensor.toSensorDto();
-			sensorDto.setSensorValues(sensorValueDtoList);
-			sensorDto.setSensorTypeId(sensor.getSensorType().getId());
-			
-			sensorDtoList.add(sensorDto);
-		});
+		}
 		
 		project.setSensors(sensorDtoList);
 		

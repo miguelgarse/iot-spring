@@ -7,7 +7,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,7 +37,8 @@ public class SensorTypeEntity {
 
 	private String code;
 	
-	private String type;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private SensorCategoryEntity category;
 	
 	private String description;
 	
@@ -58,15 +58,19 @@ public class SensorTypeEntity {
 	@Temporal(TemporalType.DATE)
 	private Date dateLastModified;
 
+	private Boolean isActive;
 	
 	public SensorTypeEntity(SensorTypeDto sensorType) {
 		BeanUtils.copyProperties(sensorType, this);
 	}
 
 	public SensorTypeDto toSensorTypeDto() {
-		SensorTypeDto sensorType = new SensorTypeDto();
-		BeanUtils.copyProperties(this, sensorType);
-		return sensorType;
+		SensorTypeDto sensorTypeDto = new SensorTypeDto();
+		BeanUtils.copyProperties(this, sensorTypeDto);
+		
+		sensorTypeDto.setCategory(this.getCategory().toSensorCategoryDto());
+		
+		return sensorTypeDto;
 	}
 	
 }

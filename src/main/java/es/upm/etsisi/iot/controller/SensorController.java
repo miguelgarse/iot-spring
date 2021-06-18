@@ -31,7 +31,7 @@ public class SensorController {
 		this.sensorService = sensorService;
 	}
 
-	@PostMapping(value = "")
+	@PostMapping()
 	public SensorDto createSensor(@NotNull @NotEmpty @RequestBody SensorDto sensor) {
 		return this.sensorService.createSensor(sensor);
 	}
@@ -46,7 +46,7 @@ public class SensorController {
 		this.sensorService.deleteSensor(sensorId);
 	}
 
-	@GetMapping(value = "")
+	@GetMapping()
 	public List<SensorDto> findAllSensors() {
 		return this.sensorService.findAll();
 	}

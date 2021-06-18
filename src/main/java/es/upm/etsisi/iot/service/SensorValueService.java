@@ -7,31 +7,33 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.upm.etsisi.iot.dto.SensorDto;
+import es.upm.etsisi.iot.dto.SensorValueDto;
 import es.upm.etsisi.iot.modelo.ProjectEntity;
 import es.upm.etsisi.iot.modelo.SensorEntity;
+import es.upm.etsisi.iot.modelo.SensorValueEntity;
 import es.upm.etsisi.iot.modelo.dao.ProjectRepository;
-import es.upm.etsisi.iot.modelo.dao.SensorRepository;
 import es.upm.etsisi.iot.modelo.dao.SensorValueRepository;
 
 @Service
+@Transactional
 public class SensorValueService {
 	
-	private SensorRepository sensorRepository;
 	private SensorValueRepository sensorValueRepository;
 	private ProjectRepository projectRepository;
 	
 	@Autowired
-	public SensorValueService(SensorRepository sensorRepository, SensorValueRepository sensorValueRepository, ProjectRepository projectRepository) {
-		this.sensorRepository = sensorRepository;
+	public SensorValueService(SensorValueRepository sensorValueRepository, ProjectRepository projectRepository) {
 		this.sensorValueRepository = sensorValueRepository;
 		this.projectRepository = projectRepository;
 	}
 
-	public List<SensorDto> findAllSensorValueBySensorId(Long sensorId) {
-		// Empty service
-		return null;
+	public List<SensorValueDto> findAllSensorValueBySensorId(Long sensorId) {
+		return this.sensorValueRepository.findBySensorId(sensorId).stream()
+				.map(SensorValueEntity::toSensorValueDto)
+				.collect(Collectors.toList());
 	}
 	
 	public List<SensorDto> findAllSensorValueByProjectId(Long projectId) {

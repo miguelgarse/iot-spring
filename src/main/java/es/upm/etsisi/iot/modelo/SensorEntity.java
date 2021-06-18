@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.OrderBy;
 import org.springframework.beans.BeanUtils;
 
 import es.upm.etsisi.iot.dto.SensorDto;
@@ -41,13 +42,14 @@ public class SensorEntity {
 
 	private String name;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private SensorTypeEntity sensorType;
 	
-	@ManyToOne(targetEntity = ProjectEntity.class, fetch = FetchType.LAZY)
+	@ManyToOne
 	private ProjectEntity project;
 	
-	@OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
+	@OrderBy(clause = "timestamp asc")
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval=true)
 	private List<SensorValueEntity> sensorValues;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
