@@ -46,14 +46,8 @@ public class SensorValueEntity {
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	private User createdUser;
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	private User lastModifieduser;
-
 	@Temporal(TemporalType.DATE)
 	private Date dateCreated;
-
-	@Temporal(TemporalType.DATE)
-	private Date dateLastModified;
 
 	public SensorValueEntity(SensorValueDto sensorValue) {
 		BeanUtils.copyProperties(sensorValue, this);
