@@ -24,8 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
-import es.upm.etsisi.iot.security.entity.MainUser;
-import es.upm.etsisi.iot.security.entity.User;
+import es.upm.etsisi.iot.api.dtos.MainUserDto;
+import es.upm.etsisi.iot.data.model.UserEntity;
 
 @Component
 public class Utilities {
@@ -35,12 +35,12 @@ public class Utilities {
 	@Value("${mail.password}")
 	private String mailPassword;
 	
-	public MainUser getCurrentUser() {
+	public MainUserDto getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (MainUser) authentication.getPrincipal();
+		return (MainUserDto) authentication.getPrincipal();
 	}
 	
-	public void sendMail(User user, String unencryptedPassword) throws MessagingException {
+	public void sendMail(UserEntity user, String unencryptedPassword) throws MessagingException {
 		Properties prop = new Properties();
 		prop.put("mail.smtp.auth", true);
 		prop.put("mail.smtp.starttls.enable", "true");
