@@ -57,7 +57,7 @@ public class UserController {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/createUser")
-	public ResponseEntity<String> createUser(@Valid @RequestBody NewUser newUser, BindingResult bindingResult){
+	public ResponseEntity createUser(@Valid @RequestBody NewUser newUser, BindingResult bindingResult){
 		if(bindingResult.hasErrors()) {
 			return new ResponseEntity<>("Campos del usuario erroneos", HttpStatus.BAD_REQUEST);
 		} else if(userService.existsByUsername(newUser.getUsername())){
@@ -90,11 +90,11 @@ public class UserController {
 			
 			try {
 				utilities.sendMail(user, newUser.getPassword());
-			} catch (MessagingException e) {
-				e.printStackTrace();
+			} catch (Exception excep) {
+				excep.printStackTrace();
 			}
 			
-			return new ResponseEntity<>("Usuario creado", HttpStatus.CREATED);
+			return new ResponseEntity<>(user.toUserDto(), HttpStatus.CREATED);
 		}
 	}
 	

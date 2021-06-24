@@ -25,7 +25,7 @@ public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@NotNull
 	@Enumerated(EnumType.STRING) // Para que la base de datos no lo contemple como un numero
