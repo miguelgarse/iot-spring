@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import es.upm.etsisi.iot.dto.ProjectDto;
-import es.upm.etsisi.iot.dto.SensorDto;
+import es.upm.etsisi.iot.domain.services.ProjectService;
+import es.upm.etsisi.iot.api.dtos.ProjectDto;
+import es.upm.etsisi.iot.api.dtos.SensorDto;
 
 class TestClass {
 
