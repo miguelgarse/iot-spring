@@ -31,6 +31,8 @@ import es.upm.etsisi.iot.api.dtos.NewUserDto;
 import es.upm.etsisi.iot.api.dtos.UserDto;
 import es.upm.etsisi.iot.data.model.RoleEntity;
 import es.upm.etsisi.iot.data.model.UserEntity;
+import es.upm.etsisi.iot.domain.exceptions.BadRequestException;
+import es.upm.etsisi.iot.domain.exceptions.ConflictException;
 import es.upm.etsisi.iot.domain.services.RoleService;
 import es.upm.etsisi.iot.domain.services.UserService;
 import es.upm.etsisi.iot.utils.RoleName;
@@ -56,13 +58,15 @@ public class UserResource {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/createUser")
-	public ResponseEntity createUser(@Valid @RequestBody NewUserDto newUser, BindingResult bindingResult){
+	public UserDto createUser(@Valid @RequestBody NewUserDto newUser, BindingResult bindingResult){
+		UserDto createdUserDto = null;
+		
 		if(bindingResult.hasErrors()) {
-			return new ResponseEntity<>("Campos del usuario erroneos", HttpStatus.BAD_REQUEST);
+			throw new BadRequestException("Campos del usuario erroneos");
 		} else if(userService.existsByUsername(newUser.getUsername())){
-			return new ResponseEntity<>("Nombre de usuario ya existe", HttpStatus.BAD_REQUEST);
+			throw new ConflictException("Nombre de usuario ya existe");
 		} else if(userService.existsByEmail(newUser.getEmail())){
-			return new ResponseEntity<>("Email ya existe", HttpStatus.BAD_REQUEST);
+			throw new ConflictException("Email ya existe");
 		} else {
 			UserEntity user = new UserEntity(newUser.getName(), newUser.getUsername(), newUser.getEmail(),
 					passwordEncoder.encode(newUser.getPassword()));
@@ -93,8 +97,10 @@ public class UserResource {
 				excep.printStackTrace();
 			}
 			
-			return new ResponseEntity<>(user.toUserDto(), HttpStatus.CREATED);
+			createdUserDto = user.toUserDto();
 		}
+		
+		return createdUserDto;
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")

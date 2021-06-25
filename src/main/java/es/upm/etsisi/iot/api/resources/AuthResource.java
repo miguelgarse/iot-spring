@@ -25,6 +25,7 @@ import es.upm.etsisi.iot.api.dtos.JwtDto;
 import es.upm.etsisi.iot.api.dtos.LoginUserDto;
 import es.upm.etsisi.iot.configurations.JwtProvider;
 import es.upm.etsisi.iot.data.model.UserEntity;
+import es.upm.etsisi.iot.domain.exceptions.BadRequestException;
 import es.upm.etsisi.iot.domain.services.RoleService;
 import es.upm.etsisi.iot.domain.services.UserService;
 
@@ -51,7 +52,7 @@ public class AuthResource {
 	@PostMapping("/login")
 	public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUserDto loginUser, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
-			return new ResponseEntity("Campos del usuario erroneos", HttpStatus.BAD_REQUEST);
+			throw new BadRequestException("Campos del usuario erroneos");
 		} else {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
@@ -71,4 +72,5 @@ public class AuthResource {
 			return new ResponseEntity<>(jwtDto, HttpStatus.OK);
 		}
 	}
+	
 }
