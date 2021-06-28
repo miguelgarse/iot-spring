@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +23,7 @@ import es.upm.etsisi.iot.api.dtos.ApiSensorValueDto;
 import es.upm.etsisi.iot.api.dtos.ApiUserDto;
 import es.upm.etsisi.iot.api.dtos.UserDto;
 import es.upm.etsisi.iot.data.model.UserEntity;
+import es.upm.etsisi.iot.domain.exceptions.BadRequestException;
 import es.upm.etsisi.iot.domain.services.ProjectService;
 import es.upm.etsisi.iot.domain.services.SensorService;
 import es.upm.etsisi.iot.domain.services.SensorValueService;
@@ -38,6 +38,8 @@ public class DataResource {
 	private ProjectService projectService;
 	private SensorService sensorService;
 	private SensorValueService sensorValueService;
+	
+	private static final String NOT_VALID_TOKEN_MSG = "Token is not valid";
 	
 	@Autowired
 	public DataResource(UserService userService, ProjectService projectService, SensorService sensorService, SensorValueService sensorValueService) {
@@ -58,19 +60,17 @@ public class DataResource {
 	}
 	
 	@GetMapping("/{username}")
-	public ResponseEntity<ApiUserDto> findByUsername(@PathVariable String username, @RequestParam("token") String tokenApi) {
+	public ApiUserDto findByUsername(@PathVariable String username, @RequestParam("token") String tokenApi) {
 		if(!checkToken(tokenApi))
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new AccessDeniedException(NOT_VALID_TOKEN_MSG);
 		
-		ApiUserDto apiUserDto = getApiData(username);
-		
-		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
+		return getApiData(username);
 	}
 
 	@GetMapping("/{username}/{projectId}")
-	public ResponseEntity<ApiUserDto> findByUsernameAndProject(@PathVariable String username, @PathVariable Long projectId, @RequestParam("token") String tokenApi) {
+	public ApiUserDto findByUsernameAndProject(@PathVariable String username, @PathVariable Long projectId, @RequestParam("token") String tokenApi) {
 		if(!checkToken(tokenApi))
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new AccessDeniedException(NOT_VALID_TOKEN_MSG);
 		
 		ApiUserDto apiUserDto = getApiData(username);
 		
@@ -81,13 +81,13 @@ public class DataResource {
 				.collect(Collectors.toList())
 		);
 		
-		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
+		return apiUserDto;
 	}
 	
 	@GetMapping("/{username}/{projectId}/{sensor}")
-	public ResponseEntity<ApiUserDto> findByUsernameAndProjectAndSensor(@PathVariable String username, @PathVariable Long projectId, @PathVariable String sensor, @RequestParam("token") String tokenApi) {
+	public ApiUserDto findByUsernameAndProjectAndSensor(@PathVariable String username, @PathVariable Long projectId, @PathVariable String sensor, @RequestParam("token") String tokenApi) {
 		if(!checkToken(tokenApi))
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new AccessDeniedException(NOT_VALID_TOKEN_MSG);
 		
 		ApiUserDto apiUserDto = getApiData(username);
 		
@@ -109,16 +109,16 @@ public class DataResource {
 			);
 		});
 		
-		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
+		return apiUserDto;
 	}
 	
 	@GetMapping("/{username}/{projectId}/{sensor}/{timestampIni}/{timestampEnd}")
-	public ResponseEntity<ApiUserDto> findByUsernameAndProjectAndSensorAndTimestampIniTimestampEnd(
+	public ApiUserDto findByUsernameAndProjectAndSensorAndTimestampIniTimestampEnd(
 			@PathVariable String username, @PathVariable Long projectId, @PathVariable String sensor,
 			@PathVariable String timestampIni, @PathVariable String timestampEnd,
 			@RequestParam("token") String tokenApi) {
 		if (!checkToken(tokenApi))
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			throw new AccessDeniedException(NOT_VALID_TOKEN_MSG);
 
 		ApiUserDto apiUserDto = null;
 		
@@ -127,7 +127,7 @@ public class DataResource {
 			final Date dateEnd = new SimpleDateFormat("yyyyMMddhhmm").parse(timestampEnd); 
 			
 			if(dateIni.after(dateEnd) || !dateIni.before(dateEnd)) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+				throw new BadRequestException("Request params are wrong!");
 			}
 			
 			apiUserDto = getApiData(username);
@@ -159,9 +159,9 @@ public class DataResource {
 			});
 			
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new BadRequestException("Request params are wrong!");
 		}
-		return new ResponseEntity<>(apiUserDto, HttpStatus.FOUND);
+		return apiUserDto;
 	}
 	
 	private ApiUserDto getApiData(String username) {
