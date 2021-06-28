@@ -3,7 +3,6 @@ package es.upm.etsisi.iot.api.resources;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,28 +42,28 @@ public class ProjectResource {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<ProjectDto>> findAll() {
-		return	ResponseEntity.ok(projectService.findAll());
+	public List<ProjectDto> findAll() {
+		return	projectService.findAll();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ProjectDto> findById(@PathVariable Long id) {
-		return ResponseEntity.ok(projectService.findById(id));
+	public ProjectDto findById(@PathVariable Long id) {
+		return projectService.findById(id);
 	}
 
 	@GetMapping("/byCurrentUser")
-	public ResponseEntity<List<ProjectDto>> findAllByCurrentUser(Authentication authentication) {
+	public List<ProjectDto> findAllByCurrentUser(Authentication authentication) {
 		String username = authentication.getName();
-		return ResponseEntity.ok(projectService.findAllByCreatedUser(username));
+		return projectService.findAllByCreatedUser(username);
 	}
 	
 	@PostMapping("/search")
-	public List<ProjectDto> searchProject(@RequestBody ProjectDto projectSearch) throws Exception {
+	public List<ProjectDto> searchProject(@RequestBody ProjectDto projectSearch) {
 		return projectService.searchProject(projectSearch);
 	}
 
 	@DeleteMapping("/{projectId}")
-	public void deleteProject(@PathVariable Long projectId) throws Exception {
+	public void deleteProject(@PathVariable Long projectId) {
 		projectService.deleteById(projectId);
 	}
 }

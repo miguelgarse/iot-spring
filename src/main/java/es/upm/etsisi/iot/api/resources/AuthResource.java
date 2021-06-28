@@ -6,8 +6,6 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +48,7 @@ public class AuthResource {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUserDto loginUser, BindingResult bindingResult) {
+	public JwtDto login(@Valid @RequestBody LoginUserDto loginUser, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
 			throw new BadRequestException("Campos del usuario erroneos");
 		} else {
@@ -69,7 +67,7 @@ public class AuthResource {
 				this.userService.save(user);
 			}
 			
-			return new ResponseEntity<>(jwtDto, HttpStatus.OK);
+			return jwtDto;
 		}
 	}
 	

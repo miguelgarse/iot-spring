@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -105,51 +103,51 @@ public class UserResource {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping()
-	public ResponseEntity<List<UserEntity>> findAllUsers(){
-		return new ResponseEntity<>(this.userService.findAll(), HttpStatus.OK);
+	public List<UserEntity> findAllUsers(){
+		return this.userService.findAll();
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/{userId}")
-	public ResponseEntity<UserDto> findUserById(@PathVariable Long userId){
-		return new ResponseEntity<>(this.userService.findById(userId), HttpStatus.OK);
+	public UserDto findUserById(@PathVariable Long userId){
+		return this.userService.findById(userId);
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<UserDto> deleteUserId(@PathVariable Long userId){
+	public UserDto deleteUserId(@PathVariable Long userId){
 		UserDto userToDelete = this.userService.findById(userId);
 		
 		if(userToDelete != null) {
 			this.userService.deleteUserById(userId);
-			return new ResponseEntity<>(userToDelete, HttpStatus.OK);
+			return userToDelete;
 		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new BadRequestException("The User Id is not correct");
 		}
 	}
 	
 	@GetMapping("/getCurrentUser")
-	public ResponseEntity<UserDto> getCurrentUser(){
-		return new ResponseEntity<>(this.userService.getCurrentUser(), HttpStatus.OK);
+	public UserDto getCurrentUser(){
+		return this.userService.getCurrentUser();
 	}
 	
 	@GetMapping("/generateTokenApi")
-	public ResponseEntity<UserDto> generateTokenApi(){
-		return new ResponseEntity<>(this.userService.generateTokenApi(), HttpStatus.OK);
+	public UserDto generateTokenApi(){
+		return this.userService.generateTokenApi();
 	}
 	
 	@PutMapping("/updateUserImage")
-	public ResponseEntity<UserDto> updateUserImage(@RequestPart("image") String base64image) throws IOException{
-		return new ResponseEntity<>(this.userService.updateUserImage(base64image), HttpStatus.OK);
+	public UserDto updateUserImage(@RequestPart("image") String base64image) throws IOException{
+		return this.userService.updateUserImage(base64image);
 	}
 	
 	@PutMapping("/updatePassword")
-	public ResponseEntity<UserDto> updatePassword(@RequestPart("password") String password) throws IOException{
-		return new ResponseEntity<>(this.userService.updatePassword(password), HttpStatus.OK);
+	public UserDto updatePassword(@RequestPart("password") String password) throws IOException{
+		return this.userService.updatePassword(password);
 	}
 	
 	@PutMapping("/updateGithub")
-	public ResponseEntity<UserDto> updateGithub(@RequestPart("gitHub") String gitHub) throws IOException{
-		return new ResponseEntity<>(this.userService.updateGithub(gitHub), HttpStatus.OK);
+	public UserDto updateGithub(@RequestPart("gitHub") String gitHub) throws IOException{
+		return this.userService.updateGithub(gitHub);
 	}
 }
