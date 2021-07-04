@@ -1,0 +1,38 @@
+
+
+
+
+INSERT INTO public.roles VALUES (nextval('public."roles_id_seq"'), 'ROLE_ADMIN');
+INSERT INTO public.roles VALUES (nextval('public."roles_id_seq"'), 'ROLE_USER');
+
+INSERT INTO public.users VALUES (nextval('public."users_id_seq"'), current_timestamp, current_timestamp, 'iot.etsisi@upm.es', '', true, '', 'Administrador', '$2y$06$aICOjZ2wfxg6Edn59bWlquoVBrIy0gwAAHnn2FsLfTtVN3vzy4fsC', '', '', 'admin', null);
+
+INSERT INTO public.user_roles VALUES (1, 1);
+
+
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-CAIRE', CURRENT_DATE, CURRENT_DATE, 'Sensor de calidad del aire', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-GESTOS-MANO', CURRENT_DATE, CURRENT_DATE, 'Sensor de movimiento', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-HUM-SUELO', CURRENT_DATE, CURRENT_DATE, 'Sensor de humedad', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-LUZ', CURRENT_DATE, CURRENT_DATE, 'Sensor de luminosidad', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-LUZ-UV', CURRENT_DATE, CURRENT_DATE, 'Sensor de radiación ultravioleta', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-NFC', CURRENT_DATE, CURRENT_DATE, 'Sensor Near Field Communication', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-PIR', CURRENT_DATE, CURRENT_DATE, 'Sensor de movimiento', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-SONIDO-AMB', CURRENT_DATE, CURRENT_DATE, 'Sensor de presión sonora', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-TEHU-AMB', CURRENT_DATE, CURRENT_DATE, 'Sensor de temperatura y humedad', true, 1, 1);
+INSERT INTO public.sensor_category VALUES (nextval('public."seq_sensor_category"'), 'S-TEHUCO2-AMB', CURRENT_DATE, CURRENT_DATE, 'Sensor de temperatura, humedad y CO2', true, 1, 1);
+
+
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),1,'PPD42NS','Seeed','Dust sensor. Calidad del aire en un entorno midiendo la concentración de polvo','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1743241/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),1,'MP503','Seeed','Calidad de aire interior. Monóxido de carbono, alcohol, acetona, diluyente, formaldehído y otros gases ligeramente tóxicos. Seeed Studio Air Quality Sensor v1.3 - 101020078','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1743263/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),1,'SVM30','Sensirion','Sensor Calidad de Aire. Temperatura, humedad y gas múltiple que contiene un sensor de gas SGP30, así como un sensor de humedad y temperatura SHTC1.','https://es.rs-online.com/web/p/sensores-calidad-aire/1950685/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),2,'PAJ7620U2','Seeed','Sensor de gestos Grove Seeed Studio','https://es.rs-online.com/web/p/placas-y-kits-compatibles-con-arduino/1743262/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),3,'LMV358ID','Seeed','Sensor de humedad del suelo basado en cambios de capacitancia. Módulo Seeed Studio Grove - Capacitive Moisture Sensor - 101020614','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1887084/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),4,'SEEEDv1.2','Seeed','Sensor de luz. Kit de desarrollo de sensores Sistema Grove. Seeed Studio Light Sensor v1.2 - 101020132','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1743246/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),5,'GUVA-S12SD','Adafruit','Kit de desarrollo de sensores. Módulo de desconexión de sensor de luz UV.','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1245472', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),6,'OEM-MICODE','Eccel Technology Ltd','Lector/Escritura NFC USB. Lector RFID, Tipo Lectura/escritura, interfaz USB, 5V, Eccel Technology Ltd OEM-MICODE-USB (000128)','https://es.rs-online.com/web/p/products/1262181/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),7,'PIR28032','Parallax Inc','Módulo sensor PIR Parallax Inc - 28032','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/8430840/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),8,'LM2904','Seeed','Kit de sensor Seeed Studio Loudness','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1743250/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),9,'AM2302','Seeed','Kit de desarrollo de sensores AM2302 Sensor para Sensor de temperatura y humedad','https://es.rs-online.com/web/p/herramientas-de-desarrollo-de-sensores/1845076/', current_timestamp, current_timestamp, 1, 1, true);
+INSERT INTO public.sensor_type(id, category_id, code, manufacturer, description, url, date_created, date_last_modified, created_user_id, last_modifieduser_id, is_active) VALUES (nextval('public."seq_sensor_type"'),10,'SCD30','Sensirion','Sensor de temperatura y humedad SCD30 CO2 sensor module, encapsulado Módulo 7 pines, interfaz I2C, UART SCD30','https://es.rs-online.com/web/p/sensores-de-humedad-y-temperatura/1720552', current_timestamp, current_timestamp, 1, 1, true);
+
+
